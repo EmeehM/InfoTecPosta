@@ -1,5 +1,8 @@
 import customtkinter as ctk
-from clientes import Clientes
+
+import clientes
+
+
 class Hardware(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -27,7 +30,7 @@ class Hardware(ctk.CTkFrame):
 
         #--------------------Botones arriba a la derecha---------------------------
         self.controller = controller
-        self.CambiarFrameCliente = ctk.CTkButton(self, text="Clientes", command=lambda: controller.show_frame(Clientes),font=Fuente_General)
+        self.CambiarFrameCliente = ctk.CTkButton(self, text="Clientes", command=lambda: controller.show_frame(clientes.Clientes),font=Fuente_General)
         self.CambiarFrameCliente.grid(row=0, column=1, padx=10)
         self.CambiarFrameSocios = ctk.CTkButton(self, text="Socios", command=lambda: controller.show_frame(),font=Fuente_General)
         self.CambiarFrameSocios.grid(row=0, column=2, padx=10)

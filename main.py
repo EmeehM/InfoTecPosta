@@ -36,7 +36,6 @@ class MainWindow(ctk.CTk):
         frame = self.frames[page_class]
         frame.tkraise()
 
-
 if __name__ == "__main__":
     app = MainWindow()
     app.mainloop()
