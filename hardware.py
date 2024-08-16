@@ -55,3 +55,14 @@ class Hardware(ctk.CTkFrame):
         self.LA_Nombre.grid(row=4,column=0,sticky="w",pady=(20,0))
         self.IN_Nombre = ctk.CTkEntry(self,placeholder_text="Nombre",font=Fuente_General)
         self.IN_Nombre.grid(row=4,column=0,padx=(245,0),sticky="w",pady=(20,0))
+
+        self.LA_Precio = ctk.CTkLabel(self, text="Precio del Componente:", font=Fuente_General)
+        self.LA_Precio.grid(row=5, column=0, sticky="w", pady=(20, 0))
+        self.IN_Precio = ctk.CTkEntry(self, placeholder_text="Precio", font=Fuente_General)
+        self.IN_Precio.grid(row=5, column=0, padx=(230, 0), sticky="w", pady=(20, 0))
+
+        self.LA_Unidades = ctk.CTkLabel(self, text="Cantidad de Unidades:", font=Fuente_General)
+        self.LA_Unidades.grid(row=6, column=0, sticky="w", pady=(20, 0))
+        self.IN_Unidades = ctk.CTkEntry(self, placeholder_text="Unidades", font=Fuente_General)
+        self.IN_Unidades.grid(row=6, column=0, padx=(218, 0), sticky="w", pady=(20, 0))
+
