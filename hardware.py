@@ -46,6 +46,7 @@ class Hardware(ctk.CTkFrame):
             if(seleccion == "Agregar"):
                 self.Dialog = ctk.CTkInputDialog(text="Agregar Nuevo tipo:", title="Tipo de Hardware",)
                 Auxiliar=str(self.Dialog.get_input())
+                print(Auxiliar)
                 baseDeDatos.agregar_tipo(Auxiliar)
                 TiposDeHard = baseDeDatos.obtener_tipos()
                 TiposDeHard.insert(0, "-")
@@ -109,6 +110,9 @@ class Hardware(ctk.CTkFrame):
             Busqueda("", "Id")
 
         def eliminar_marca(marca):
+            print(
+                marca
+            )
             baseDeDatos.eliminar_marca(marca)
             MarcasDeHard = baseDeDatos.obtener_marca()
             MarcasDeHard.insert(0, "-")
@@ -117,7 +121,6 @@ class Hardware(ctk.CTkFrame):
             self.CB_MarcaHard.set(MarcasDeHard[0])
 
         def eliminar_tipo(tipo):
-            print(tipo)
             baseDeDatos.eliminar_tipo(tipo)
             TiposDeHard = baseDeDatos.obtener_tipos()
             TiposDeHard.insert(0, "-")
@@ -155,7 +158,7 @@ class Hardware(ctk.CTkFrame):
         self.LA_MarcaHard.grid(row=3, column=0, sticky="w", pady=(20, 0))
         self.CB_MarcaHard = ctk.CTkComboBox(self, values=MarcasDeHard, font=Fuente_General, command=SeleccionMarca)
         self.CB_MarcaHard.grid(row=3, column=0, sticky="w", padx=(180, 0), pady=(20, 0))
-        self.BTN_EliminarMarca = ctk.CTkButton(self, text="🗑️", width=5,command=lambda :eliminar_marca(self.CB_MarcaHard.get()))
+        self.BTN_EliminarMarca = ctk.CTkButton(self, text="🗑️", width=5,command=lambda : eliminar_marca(self.CB_MarcaHard.get()))
         self.BTN_EliminarMarca.grid(row=3, padx=(200, 0), pady=(20, 0))
 
         self.LA_Nombre= ctk.CTkLabel(self,text="Nombre del Componente:",font=Fuente_General)

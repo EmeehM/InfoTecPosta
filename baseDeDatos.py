@@ -25,9 +25,6 @@ def buscar_hardware(caracteristicas=None, tipo=None, id_hard=None):
     cursor.execute(query, params)
     resultados = cursor.fetchall()
 
-    for registro in resultados:
-        print(registro)
-
     return resultados
 # Función para modificar un registro
 def modificar_hardware(id_hard, nuevas_caracteristicas=None, nuevo_precio=None, nuevas_unidades=None):
@@ -65,12 +62,17 @@ def eliminar_hardware(id_hard):
     conn.commit()
 #Función para eliminar una marca
 def eliminar_marca(id_marca):
-    cursor.execute("DELETE FROM Marca WHERE ID_Marca = ?", (id_marca))
+    id_marca = int(id_marca[:4])
+    cursor.execute("DELETE FROM Marca WHERE ID_Marca = ?", (id_marca,))
     cursor.execute("DELETE FROM Hardware WHERE ID_Marca = ?", (id_marca,))
+    conn.commit()
 #Función para eliminar un tipo
 def eliminar_tipo(id_tipo):
-    cursor.execute("DELETE FROM TipoHard WHERE Descripcion = ?", (id_tipo,))
+    id_tipo = int(id_tipo[:4])
+    print(id_tipo)
+    cursor.execute("DELETE FROM TipoHard WHERE Id_Tipohard = ?", (id_tipo,))
     cursor.execute("DELETE FROM Hardware WHERE ID_Tipohard = ?", (id_tipo,))
+    conn.commit()
 
 
 #----------------------------------OBTENER-------------------------------------------------------
@@ -95,45 +97,38 @@ def obtener_ultimos_ids():
     }
 
 def obtener_marca():
-    cursor.execute("SELECT Descripcion FROM Marca")
+    cursor.execute("SELECT * FROM Marca")
     lista_marcas = cursor.fetchall()  # Obtiene todas las filas
-
-    # Extraer las descripciones de la lista de tuplas
-    lista_marcas = [marca[0] for marca in lista_marcas]
+    cursor.execute("SELECT * FROM Marca")
+    indexes = cursor.fetchall()
+    indexes = [marca[0] for marca in indexes]
+    lista_marcas = [marca[1] for marca in lista_marcas]
+    i=0
+    for item in lista_marcas:
+        lista_marcas[i] = str(indexes[i])+". " + item
+        i = i+1
     return lista_marcas
 
 def obtener_tipos():
-    cursor.execute("SELECT Descripcion FROM TipoHard")
+    cursor.execute("SELECT * FROM TipoHard")
     lista_tipos = cursor.fetchall()  # Obtiene todas las filas
-
+    cursor.execute("SELECT * FROM TipoHard")
+    indexes = cursor.fetchall()
     # Extraer las descripciones de la lista de tuplas
-    lista_tipos = [marca[0] for marca in lista_tipos]
+    lista_tipos = [marca[1] for marca in lista_tipos]
+    indexes=[marca[0] for marca in indexes]
+    i=0
+    for item in lista_tipos:
+        lista_tipos[i] = str(indexes[i])+". " + item
+        i = i+1
     return lista_tipos
 
 # -------------------------------------CREACION-------------------------------------------------------------------------
 # Función para añadir un nuevo registro
 def agregar_hardware(caracteristicas, precio_unitario, unidades_disponibles, tipo_hardware_descripcion, marca_descripcion):
-    # Insertar en la tabla Marca si no existe
-    cursor.execute("SELECT ID_Marca FROM Marca WHERE Descripcion = ?", (marca_descripcion,))
-    resultado_marca = cursor.fetchone()
-
-    if resultado_marca is None:
-        cursor.execute("INSERT INTO Marca (Descripcion) VALUES (?)", (marca_descripcion,))
-        id_marca = cursor.lastrowid
-    else:
-        id_marca = resultado_marca[0]
-
-    # Insertar en la tabla TipoHard si no existe
-    cursor.execute("SELECT ID_Tipohard FROM TipoHard WHERE Descripcion = ?", (tipo_hardware_descripcion,))
-    resultado_tipohard = cursor.fetchone()
-
-    if resultado_tipohard is None:
-        cursor.execute("INSERT INTO TipoHard (Descripcion) VALUES (?)", (tipo_hardware_descripcion,))
-        id_tipohard = cursor.lastrowid
-    else:
-        id_tipohard = resultado_tipohard[0]
-
     # Insertar en la tabla Hardware
+    id_tipohard = tipo_hardware_descripcion[:4]
+    id_marca = marca_descripcion[:4]
     cursor.execute(
         """INSERT INTO Hardware (ID_Tipohard, ID_Marca, Caracteristicas, Precio_Unitario, Unidades_Disponibles)
            VALUES (?, ?, ?, ?, ?)""",
