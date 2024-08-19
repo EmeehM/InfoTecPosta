@@ -11,13 +11,13 @@ class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("InfoTec")
-        self.maxsize(width=1200, height=800)
-        self.minsize(width=1200, height=800)
+        self.maxsize(width=1000, height=500)
+        self.minsize(width=1000, height=500)
         #Dibujado de la pantalla en el centro mas o menos
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
-        position_x = round((screen_width / 2) - (1200 / 2))
-        position_y = round((screen_height / 2) - (800 / 2))
+        position_x = round((screen_width / 2) - (1000 / 2))
+        position_y = round((screen_height / 2) - (500 / 2))
         self.geometry(f"1200x800+{position_x}+{position_y}")
 
         # Container que tiene a los frames dentro
