@@ -151,14 +151,14 @@ class Hardware(ctk.CTkFrame):
         self.LA_TipoHard.grid(row=2, column=0, sticky="w",pady=(20,0))
         self.CB_TipoHard = ctk.CTkComboBox(self, values=TiposDeHard,font=Fuente_General, command=SeleccionTipo)
         self.CB_TipoHard.grid(row=2, column=0,sticky="w",padx=(180,0),pady=(20,0))
-        self.BTN_EliminarTipo = ctk.CTkButton(self,text="🗑️", width=5, command=lambda : eliminar_tipo(self.CB_TipoHard.get()))
+        self.BTN_EliminarTipo = ctk.CTkButton(self,text="", width=5, command=lambda : eliminar_tipo(self.CB_TipoHard.get()))
         self.BTN_EliminarTipo.grid(row=2,padx=(200,0),pady=(20,0))
 
         self.LA_MarcaHard = ctk.CTkLabel(self, text="Marca de Hardware:", font=Fuente_General)
         self.LA_MarcaHard.grid(row=3, column=0, sticky="w", pady=(20, 0))
         self.CB_MarcaHard = ctk.CTkComboBox(self, values=MarcasDeHard, font=Fuente_General, command=SeleccionMarca)
         self.CB_MarcaHard.grid(row=3, column=0, sticky="w", padx=(180, 0), pady=(20, 0))
-        self.BTN_EliminarMarca = ctk.CTkButton(self, text="🗑️", width=5,command=lambda : eliminar_marca(self.CB_MarcaHard.get()))
+        self.BTN_EliminarMarca = ctk.CTkButton(self, text="", width=5,command=lambda : eliminar_marca(self.CB_MarcaHard.get()))
         self.BTN_EliminarMarca.grid(row=3, padx=(200, 0), pady=(20, 0))
 
         self.LA_Nombre= ctk.CTkLabel(self,text="Nombre del Componente:",font=Fuente_General)
