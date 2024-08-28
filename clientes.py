@@ -15,51 +15,10 @@ class Clientes(ctk.CTkFrame):
         # ------------Funciones------------------------------
         # CARGA DE ULTIMOS ID
         ultimosID = baseDeDatos.obtener_ultimos_ids()
-        if (ultimosID["ultimo_id_hardware"] != None):
-            UltIdHard = ultimosID["ultimo_id_hardware"] + 1
+        if (ultimosID["ultimo_id_clientes"] != None):
+            UltIdCliente = ultimosID["ultimo_id_clientes"] + 1
         else:
-            UltIdHard = 1000
-
-        if (ultimosID["ultimo_id_tipohard"] != None):
-            UltIdTipo = ultimosID["ultimo_id_tipohard"] + 1
-
-        else:
-            UltIdTipo = 2000
-
-        if (ultimosID["ultimo_id_marca"] != None):
-            UltIdMarca = ultimosID["ultimo_id_marca"] + 1
-        else:
-            UltIdMarca = 3000
-
-        # CARGA MARCAS DE HARDWARE
-        MarcasDeHard = baseDeDatos.obtener_marca()
-        MarcasDeHard.insert(0, "-")
-        MarcasDeHard.append("Agregar")
-
-        # CARGA TIPOS DE HARDWARE
-        TiposDeHard = baseDeDatos.obtener_tipos()
-        TiposDeHard.insert(0, "-")
-        TiposDeHard.append("Agregar")
-
-        def SeleccionTipo(seleccion):
-            if (seleccion == "Agregar"):
-                self.Dialog = ctk.CTkInputDialog(text="Agregar Nuevo tipo:", title="Tipo de Hardware", )
-                Auxiliar = str(self.Dialog.get_input())
-                print(Auxiliar)
-                baseDeDatos.agregar_tipo(Auxiliar)
-                TiposDeHard = baseDeDatos.obtener_tipos()
-                TiposDeHard.insert(0, "-")
-                TiposDeHard.append("Agregar")
-                self.CB_TipoHard.configure(values=TiposDeHard)
-
-        def SeleccionMarca(seleccion):
-            if (seleccion == "Agregar"):
-                self.Dialog = ctk.CTkInputDialog(text="Agregar Nueva Marca:", title="Marcas", )
-                baseDeDatos.agregar_marca(self.Dialog.get_input())
-                MarcasDeHard = baseDeDatos.obtener_marca()
-                MarcasDeHard.insert(0, "-")
-                MarcasDeHard.append("Agregar")
-                self.CB_MarcaHard.configure(values=MarcasDeHard)
+            UltIdCliente = 1000
 
         def Busqueda(texto, seleccion):
             for items in self.TV_Busqueda.get_children():
@@ -109,35 +68,16 @@ class Clientes(ctk.CTkFrame):
                 baseDeDatos.eliminar_hardware(id_hard)
             Busqueda("", "Id")
 
-        def eliminar_marca(marca):
-            print(
-                marca
-            )
-            baseDeDatos.eliminar_marca(marca)
-            MarcasDeHard = baseDeDatos.obtener_marca()
-            MarcasDeHard.insert(0, "-")
-            MarcasDeHard.append("Agregar")
-            self.CB_MarcaHard.configure(values=MarcasDeHard)
-            self.CB_MarcaHard.set(MarcasDeHard[0])
-
-        def eliminar_tipo(tipo):
-            baseDeDatos.eliminar_tipo(tipo)
-            TiposDeHard = baseDeDatos.obtener_tipos()
-            TiposDeHard.insert(0, "-")
-            TiposDeHard.append("Agregar")
-            self.CB_TipoHard.configure(values=TiposDeHard)
-            self.CB_TipoHard.set(TiposDeHard[0])
-
         # --------------------------Titulo------------------------------------------
         self.titulo = ctk.CTkLabel(self, text="Clientes", text_color="#007090", font=Fuente_Titulos)
         self.titulo.grid(row=0, column=0, padx=(5, 360), pady=(0, 20))
 
         # --------------------Botones arriba a la derecha---------------------------
         self.controller = controller
-        self.CambiarFrameCliente = ctk.CTkButton(self, text="Hardware",
+        self.CambiarFrameHardWare = ctk.CTkButton(self, text="Hardware",
                                                  command=lambda: controller.show_frame(hardware.Hardware),
                                                  font=Fuente_General)
-        self.CambiarFrameCliente.grid(row=0, column=1, padx=10)
+        self.CambiarFrameHardWare.grid(row=0, column=1, padx=10)
 
         self.CambiarFrameSocios = ctk.CTkButton(self, text="Socios", command=lambda: controller.show_frame(),
                                                 font=Fuente_General)
@@ -148,39 +88,40 @@ class Clientes(ctk.CTkFrame):
         self.CambiarFrameProveedores.grid(row=0, column=3, padx=10)
 
         # -----------------------------------Inputs de datos-----------------------------------------
-        self.IdCliente = ctk.CTkLabel(self, text=f"ID-Hardware: {UltIdHard} ", font=Fuente_General)
+        self.IdCliente = ctk.CTkLabel(self, text=f"ID-Cliente: {UltIdCliente} ", font=Fuente_General)
         self.IdCliente.grid(row=1, column=0, pady=(40, 0), sticky="w")
 
-        self.LA_TipoHard = ctk.CTkLabel(self, text="Tipo de Hardware:", font=Fuente_General)
-        self.LA_TipoHard.grid(row=2, column=0, sticky="w", pady=(20, 0))
-        self.CB_TipoHard = ctk.CTkComboBox(self, values=TiposDeHard, font=Fuente_General, command=SeleccionTipo)
-        self.CB_TipoHard.grid(row=2, column=0, sticky="w", padx=(180, 0), pady=(20, 0))
-        self.BTN_EliminarTipo = ctk.CTkButton(self, text="", width=5,
-                                              command=lambda: eliminar_tipo(self.CB_TipoHard.get()))
-        self.BTN_EliminarTipo.grid(row=2, padx=(200, 0), pady=(20, 0))
+        self.LA_DNI = ctk.CTkLabel(self, text="DNI:", font=Fuente_General)
+        self.LA_DNI.grid(row=2, column=0, sticky="w", pady=(20, 0))
+        self.IN_DNI = ctk.CTkEntry(self, font=Fuente_General)
+        self.IN_DNI.grid(row=2, column=0, sticky="w", padx=(55, 0), pady=(20, 0))
 
-        self.LA_MarcaHard = ctk.CTkLabel(self, text="Marca de Hardware:", font=Fuente_General)
-        self.LA_MarcaHard.grid(row=3, column=0, sticky="w", pady=(20, 0))
-        self.CB_MarcaHard = ctk.CTkComboBox(self, values=MarcasDeHard, font=Fuente_General, command=SeleccionMarca)
-        self.CB_MarcaHard.grid(row=3, column=0, sticky="w", padx=(180, 0), pady=(20, 0))
-        self.BTN_EliminarMarca = ctk.CTkButton(self, text="", width=5,
-                                               command=lambda: eliminar_marca(self.CB_MarcaHard.get()))
-        self.BTN_EliminarMarca.grid(row=3, padx=(200, 0), pady=(20, 0))
+        self.LA_CUIT = ctk.CTkLabel(self, text="CUIT:", font=Fuente_General)
+        self.LA_CUIT.grid(row=3, column=0, sticky="w", pady=(20, 0))
+        self.IN_CUIT = ctk.CTkEntry(self, font=Fuente_General)
+        self.IN_CUIT.grid(row=3, column=0, sticky="w", padx=(70, 0), pady=(20, 0))
 
-        self.LA_Nombre = ctk.CTkLabel(self, text="Nombre del Componente:", font=Fuente_General)
+        self.LA_Nombre = ctk.CTkLabel(self, text="Nombre o Razon Social:", font=Fuente_General)
         self.LA_Nombre.grid(row=4, column=0, sticky="w", pady=(20, 0))
         self.IN_Nombre = ctk.CTkEntry(self, placeholder_text="Nombre", font=Fuente_General)
-        self.IN_Nombre.grid(row=4, column=0, padx=(245, 0), sticky="w", pady=(20, 0))
+        self.IN_Nombre.grid(row=4, column=0, padx=(275, 0), sticky="w", pady=(20, 0))
 
-        self.LA_Precio = ctk.CTkLabel(self, text="Precio del Componente:", font=Fuente_General)
-        self.LA_Precio.grid(row=5, column=0, sticky="w", pady=(20, 0))
-        self.IN_Precio = ctk.CTkEntry(self, placeholder_text="Precio", font=Fuente_General)
-        self.IN_Precio.grid(row=5, column=0, padx=(230, 0), sticky="w", pady=(20, 0))
+        self.LA_Direccion = ctk.CTkLabel(self, text="Dirección:", font=Fuente_General)
+        self.LA_Direccion.grid(row=5, column=0, sticky="w", pady=(20, 0))
+        self.IN_Direccion = ctk.CTkEntry(self, placeholder_text="Dirección", font=Fuente_General)
+        self.IN_Direccion.grid(row=5, column=0, padx=(120, 0), sticky="w", pady=(20, 0))
 
-        self.LA_Unidades = ctk.CTkLabel(self, text="Cantidad de Unidades:", font=Fuente_General)
-        self.LA_Unidades.grid(row=6, column=0, sticky="w", pady=(20, 0))
-        self.IN_Unidades = ctk.CTkEntry(self, placeholder_text="Unidades", font=Fuente_General)
-        self.IN_Unidades.grid(row=6, column=0, padx=(218, 0), sticky="w", pady=(20, 0))
+        self.LA_Telefono = ctk.CTkLabel(self, text="Teléfono:", font=Fuente_General)
+        self.LA_Telefono.grid(row=6, column=0, sticky="w", pady=(20, 0))
+        self.IN_Telefono = ctk.CTkEntry(self, placeholder_text="Teléfono", font=Fuente_General)
+        self.IN_Telefono.grid(row=6, column=0, padx=(110, 0), sticky="w", pady=(0, 0))
+
+        self.LA_Mail = ctk.CTkLabel(self, text="Mail:", font=Fuente_General)
+        self.LA_Mail.grid(row=7, column=0, sticky="w", pady=(20, 0))
+        self.IN_Mail = ctk.CTkEntry(self, placeholder_text="Mail", font=Fuente_General)
+        self.IN_Mail.grid(row=7, column=0, padx=(60, 0), sticky="w", pady=(0, 0))
+
+
         # ------------------------------GROUPBOX-------------------------------------------------------------------------
         self.CB_Busqueda = ctk.CTkComboBox(self, width=130, height=30, font=Fuente_General,
                                            values=["-", "Id", "Nombre", "Tipo"])
@@ -207,12 +148,12 @@ class Clientes(ctk.CTkFrame):
                                                                                     self.IN_Unidades.get(),
                                                                                     self.CB_TipoHard.get(),
                                                                                     self.CB_MarcaHard.get()))
-        self.BTN_Carga.grid(row=7, column=0, padx=(10, 170), sticky="we")
+        self.BTN_Carga.grid(row=8, column=0, padx=(10, 170), sticky="we")
 
         self.BTN_Modificar = ctk.CTkButton(self, text="Modificar", font=Fuente_General,
                                            command=lambda: modificar_seleccionado())
-        self.BTN_Modificar.grid(row=7, column=2, pady=(80, 10))
+        self.BTN_Modificar.place(x=670,y=460)
 
         self.BTN_Eliminar = ctk.CTkButton(self, text="Eliminar", fg_color="#c0392b", hover_color="#e74c3c",
                                           font=Fuente_General, command=lambda: eliminar_seleccionado())
-        self.BTN_Eliminar.grid(row=7, column=3, pady=(80, 10))
+        self.BTN_Eliminar.place(x=830,y=460)

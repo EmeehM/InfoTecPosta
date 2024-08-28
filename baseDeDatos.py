@@ -90,10 +90,16 @@ def obtener_ultimos_ids():
     cursor.execute("SELECT MAX(ID_Tipohard) FROM TipoHard")
     ultimo_id_tipohard = cursor.fetchone()[0]
 
+    # Obtener el último ID de TipoHard
+    cursor.execute("SELECT MAX(ID_Clientes) FROM Clientes")
+    ultimo_id_clientes = cursor.fetchone()[0]
+
+
     return {
         "ultimo_id_hardware": ultimo_id_hardware,
         "ultimo_id_tipohard": ultimo_id_tipohard,
-        "ultimo_id_marca": ultimo_id_marca
+        "ultimo_id_marca": ultimo_id_marca,
+        "ultimo_id_clientes": ultimo_id_clientes
     }
 
 def obtener_marca():
