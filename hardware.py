@@ -5,6 +5,7 @@ from tkinter import *
 
 import baseDeDatos
 import clientes
+import comprobaciones
 
 
 class Hardware(ctk.CTkFrame):
@@ -15,22 +16,29 @@ class Hardware(ctk.CTkFrame):
 
         #------------Funciones------------------------------
         #CARGA DE ULTIMOS ID
-        ultimosID= baseDeDatos.obtener_ultimos_ids()
-        if (ultimosID["ultimo_id_hardware"] != None):
-            UltIdHard = ultimosID["ultimo_id_hardware"] + 1
-        else:
-            UltIdHard = 1000
+        def ultimosID():
+            ultimosIDvar = baseDeDatos.obtener_ultimos_ids()
+            if (ultimosIDvar["ultimo_id_hardware"] != None):
+                UltIdHard = ultimosIDvar["ultimo_id_hardware"] + 1
+            else:
+                UltIdHard = 1000
 
-        if(ultimosID["ultimo_id_tipohard"] != None):
-            UltIdTipo = ultimosID["ultimo_id_tipohard"] + 1
+            if (ultimosIDvar["ultimo_id_tipohard"] != None):
+                UltIdTipo = ultimosIDvar["ultimo_id_tipohard"] + 1
+            else:
+                UltIdTipo = 2000
 
-        else:
-            UltIdTipo = 2000
+            if (ultimosIDvar["ultimo_id_marca"] != None):
+                UltIdMarca = ultimosIDvar["ultimo_id_marca"] + 1
+            else:
+                UltIdMarca = 3000
 
-        if(ultimosID["ultimo_id_marca"] != None):
-            UltIdMarca = ultimosID["ultimo_id_marca"] + 1
-        else:
-            UltIdMarca = 3000
+            return{
+                "idTipo" : UltIdTipo,
+                "idMarca" : UltIdMarca,
+                "idHard" : UltIdHard
+            }
+
 
         #CARGA MARCAS DE HARDWARE
         MarcasDeHard = baseDeDatos.obtener_marca()
@@ -41,6 +49,14 @@ class Hardware(ctk.CTkFrame):
         TiposDeHard = baseDeDatos.obtener_tipos()
         TiposDeHard.insert(0, "-")
         TiposDeHard.append("Agregar")
+
+        def AgregarHard():
+            if(comprobaciones.Comprobacion_Hardware(self.IN_Nombre.get(),self.IN_Precio.get(),self.IN_Unidades.get())):
+                baseDeDatos.agregar_hardware(ultimosID().get("idHard"),self.IN_Nombre.get(), self.IN_Precio.get(),
+                                             self.IN_Unidades.get(), self.CB_TipoHard.get(),
+                                             self.CB_MarcaHard.get())
+                self.IdHardware.configure(text=f"ID-Hardware: {ultimosID().get("idHard")} ")
+
 
         def SeleccionTipo(seleccion):
             if(seleccion == "Agregar"):
@@ -55,7 +71,7 @@ class Hardware(ctk.CTkFrame):
 
         def SeleccionMarca(seleccion):
             if(seleccion == "Agregar"):
-                self.Dialog = ctk.CTkInputDialog(text="Agregar Nueva Marca:", title="Marcas",)
+                self.Dialog = ctk.CTkInputDialog(text="Agregar Nueva Marca:", title="Marcas")
                 baseDeDatos.agregar_marca(self.Dialog.get_input())
                 MarcasDeHard = baseDeDatos.obtener_marca()
                 MarcasDeHard.insert(0, "-")
@@ -108,6 +124,12 @@ class Hardware(ctk.CTkFrame):
                 # Ahora llama a la función para eliminar el registro
                 baseDeDatos.eliminar_hardware(id_hard)
             Busqueda("", "Id")
+            ultimosID = baseDeDatos.obtener_ultimos_ids()
+            if (ultimosID["ultimo_id_hardware"] != None):
+                UltIdHard = ultimosID["ultimo_id_hardware"] + 1
+            else:
+                UltIdHard = 1000
+            self.IdHardware.configure(text=f"ID-Hardware: {UltIdHard} ")
 
         def eliminar_marca(marca):
             print(
@@ -119,6 +141,11 @@ class Hardware(ctk.CTkFrame):
             MarcasDeHard.append("Agregar")
             self.CB_MarcaHard.configure(values=MarcasDeHard)
             self.CB_MarcaHard.set(MarcasDeHard[0])
+            ultimosID = baseDeDatos.obtener_ultimos_ids()
+            if (ultimosID["ultimo_id_marca"] != None):
+                UltIdMarca = ultimosID["ultimo_id_marca"] + 1
+            else:
+                UltIdMarca = 3000
 
         def eliminar_tipo(tipo):
             baseDeDatos.eliminar_tipo(tipo)
@@ -127,10 +154,15 @@ class Hardware(ctk.CTkFrame):
             TiposDeHard.append("Agregar")
             self.CB_TipoHard.configure(values=TiposDeHard)
             self.CB_TipoHard.set(TiposDeHard[0])
+            ultimosID = baseDeDatos.obtener_ultimos_ids()
+            if (ultimosID["ultimo_id_tipohard"] != None):
+                UltIdTipo = ultimosID["ultimo_id_tipohard"] + 1
+            else:
+                UltIdTipo = 2000
 
         #--------------------------Titulo------------------------------------------
         self.titulo = ctk.CTkLabel(self, text="Hardware", text_color="#007090", font=Fuente_Titulos)
-        self.titulo.grid(row=0, column=0, padx=(5, 360), pady=(0,20))
+        self.titulo.grid(row=0, column=0, padx=(10, 360), pady=(0,20))
 
         #--------------------Botones arriba a la derecha---------------------------
         self.controller = controller
@@ -144,35 +176,35 @@ class Hardware(ctk.CTkFrame):
         self.CambiarFrameProveedores.grid(row=0, column=3, padx=10)
 
         #-----------------------------------Inputs de datos-----------------------------------------
-        self.IdHardware= ctk.CTkLabel(self,text=f"ID-Hardware: {UltIdHard} ",font=Fuente_General)
-        self.IdHardware.grid(row=1, column=0,pady=(40,0),sticky="w")
+        self.IdHardware= ctk.CTkLabel(self,text=f"ID-Hardware: {ultimosID().get("idHard")} ",font=Fuente_General)
+        self.IdHardware.grid(row=1, column=0,pady=(40,0),sticky="w",padx=(5,0))
 
         self.LA_TipoHard = ctk.CTkLabel(self, text="Tipo de Hardware:", font=Fuente_General)
-        self.LA_TipoHard.grid(row=2, column=0, sticky="w",pady=(20,0))
+        self.LA_TipoHard.grid(row=2, column=0, sticky="w",pady=(20,0),padx=(5,0))
         self.CB_TipoHard = ctk.CTkComboBox(self, values=TiposDeHard,font=Fuente_General, command=SeleccionTipo)
         self.CB_TipoHard.grid(row=2, column=0,sticky="w",padx=(180,0),pady=(20,0))
         self.BTN_EliminarTipo = ctk.CTkButton(self,text="Eliminar", width=5, command=lambda : eliminar_tipo(self.CB_TipoHard.get()))
         self.BTN_EliminarTipo.grid(row=2,padx=(200,0),pady=(20,0))
 
         self.LA_MarcaHard = ctk.CTkLabel(self, text="Marca de Hardware:", font=Fuente_General)
-        self.LA_MarcaHard.grid(row=3, column=0, sticky="w", pady=(20, 0))
+        self.LA_MarcaHard.grid(row=3, column=0, sticky="w", pady=(20, 0),padx=(5,0))
         self.CB_MarcaHard = ctk.CTkComboBox(self, values=MarcasDeHard, font=Fuente_General, command=SeleccionMarca)
-        self.CB_MarcaHard.grid(row=3, column=0, sticky="w", padx=(180, 0), pady=(20, 0))
+        self.CB_MarcaHard.grid(row=3, column=0, sticky="w", padx=(190, 0), pady=(20, 0))
         self.BTN_EliminarMarca = ctk.CTkButton(self, text="Eliminar", width=5,command=lambda : eliminar_marca(self.CB_MarcaHard.get()))
-        self.BTN_EliminarMarca.grid(row=3, padx=(200, 0), pady=(20, 0))
+        self.BTN_EliminarMarca.grid(row=3, padx=(210, 0), pady=(20, 0))
 
         self.LA_Nombre= ctk.CTkLabel(self,text="Nombre del Componente:",font=Fuente_General)
-        self.LA_Nombre.grid(row=4,column=0,sticky="w",pady=(20,0))
+        self.LA_Nombre.grid(row=4,column=0,sticky="w",pady=(20,0),padx=(5,0))
         self.IN_Nombre = ctk.CTkEntry(self,placeholder_text="Nombre",font=Fuente_General)
         self.IN_Nombre.grid(row=4,column=0,padx=(245,0),sticky="w",pady=(20,0))
 
         self.LA_Precio = ctk.CTkLabel(self, text="Precio del Componente:", font=Fuente_General)
-        self.LA_Precio.grid(row=5, column=0, sticky="w", pady=(20, 0))
+        self.LA_Precio.grid(row=5, column=0, sticky="w", pady=(20, 0),padx=(5,0))
         self.IN_Precio = ctk.CTkEntry(self, placeholder_text="Precio", font=Fuente_General)
         self.IN_Precio.grid(row=5, column=0, padx=(230, 0), sticky="w", pady=(20, 0))
 
         self.LA_Unidades = ctk.CTkLabel(self, text="Cantidad de Unidades:", font=Fuente_General)
-        self.LA_Unidades.grid(row=6, column=0, sticky="w", pady=(20, 0))
+        self.LA_Unidades.grid(row=6, column=0, sticky="w", pady=(20, 0),padx=(5,0))
         self.IN_Unidades = ctk.CTkEntry(self, placeholder_text="Unidades", font=Fuente_General)
         self.IN_Unidades.grid(row=6, column=0, padx=(218, 0), sticky="w", pady=(20, 0))
         #------------------------------GROUPBOX-------------------------------------------------------------------------
@@ -194,9 +226,7 @@ class Hardware(ctk.CTkFrame):
 
 
         #---------------------------------Botones de Abajo-------------------------------------------------------------
-        self.BTN_Carga = ctk.CTkButton(self, text="Cargar", command=lambda:baseDeDatos.agregar_hardware(self.IN_Nombre.get(), self.IN_Precio.get(),
-                                                                                                        self.IN_Unidades.get(),self.CB_TipoHard.get(),
-                                                                                                        self.CB_MarcaHard.get()))
+        self.BTN_Carga = ctk.CTkButton(self, text="Cargar", command=lambda: AgregarHard())
         self.BTN_Carga.grid(row=7, column=0,padx=(10,170), sticky="we")
 
         self.BTN_Modificar = ctk.CTkButton(self, text="Modificar",font=Fuente_General, command=lambda: modificar_seleccionado())

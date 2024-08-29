@@ -89,42 +89,42 @@ class Clientes(ctk.CTkFrame):
 
         # -----------------------------------Inputs de datos-----------------------------------------
         self.IdCliente = ctk.CTkLabel(self, text=f"ID-Cliente: {UltIdCliente} ", font=Fuente_General)
-        self.IdCliente.grid(row=1, column=0, pady=(40, 0), sticky="w")
+        self.IdCliente.grid(row=1, column=0, pady=(40, 0), sticky="w",padx=(5,0))
 
         self.LA_DNI = ctk.CTkLabel(self, text="DNI:", font=Fuente_General)
-        self.LA_DNI.grid(row=2, column=0, sticky="w", pady=(20, 0))
-        self.IN_DNI = ctk.CTkEntry(self, font=Fuente_General)
+        self.LA_DNI.grid(row=2, column=0, sticky="w", pady=(20, 0),padx=(5,0))
+        self.IN_DNI = ctk.CTkEntry(self, font=Fuente_General,placeholder_text="DNI")
         self.IN_DNI.grid(row=2, column=0, sticky="w", padx=(55, 0), pady=(20, 0))
 
         self.LA_CUIT = ctk.CTkLabel(self, text="CUIT:", font=Fuente_General)
-        self.LA_CUIT.grid(row=3, column=0, sticky="w", pady=(20, 0))
-        self.IN_CUIT = ctk.CTkEntry(self, font=Fuente_General)
+        self.LA_CUIT.grid(row=3, column=0, sticky="w", pady=(20, 0),padx=(5,0))
+        self.IN_CUIT = ctk.CTkEntry(self, font=Fuente_General,placeholder_text="CUIT")
         self.IN_CUIT.grid(row=3, column=0, sticky="w", padx=(70, 0), pady=(20, 0))
 
         self.LA_Nombre = ctk.CTkLabel(self, text="Nombre o Razon Social:", font=Fuente_General)
-        self.LA_Nombre.grid(row=4, column=0, sticky="w", pady=(20, 0))
+        self.LA_Nombre.grid(row=4, column=0, sticky="w", pady=(20, 0),padx=(5,0))
         self.IN_Nombre = ctk.CTkEntry(self, placeholder_text="Nombre", font=Fuente_General)
-        self.IN_Nombre.grid(row=4, column=0, padx=(275, 0), sticky="w", pady=(20, 0))
+        self.IN_Nombre.grid(row=4, column=0, padx=(235, 0), sticky="w", pady=(20, 0))
 
         self.LA_Direccion = ctk.CTkLabel(self, text="Dirección:", font=Fuente_General)
-        self.LA_Direccion.grid(row=5, column=0, sticky="w", pady=(20, 0))
+        self.LA_Direccion.grid(row=5, column=0, sticky="w", pady=(20, 0),padx=(5,0))
         self.IN_Direccion = ctk.CTkEntry(self, placeholder_text="Dirección", font=Fuente_General)
-        self.IN_Direccion.grid(row=5, column=0, padx=(120, 0), sticky="w", pady=(20, 0))
+        self.IN_Direccion.grid(row=5, column=0, padx=(105, 0), sticky="w", pady=(20, 0))
 
         self.LA_Telefono = ctk.CTkLabel(self, text="Teléfono:", font=Fuente_General)
-        self.LA_Telefono.grid(row=6, column=0, sticky="w", pady=(20, 0))
+        self.LA_Telefono.grid(row=6, column=0, sticky="w", pady=(20, 0),padx=(5,0))
         self.IN_Telefono = ctk.CTkEntry(self, placeholder_text="Teléfono", font=Fuente_General)
-        self.IN_Telefono.grid(row=6, column=0, padx=(110, 0), sticky="w", pady=(0, 0))
+        self.IN_Telefono.grid(row=6, column=0, padx=(100, 0), sticky="w", pady=(20, 0))
 
         self.LA_Mail = ctk.CTkLabel(self, text="Mail:", font=Fuente_General)
-        self.LA_Mail.grid(row=7, column=0, sticky="w", pady=(20, 0))
+        self.LA_Mail.grid(row=7, column=0, sticky="w", pady=(20, 0),padx=(5,0))
         self.IN_Mail = ctk.CTkEntry(self, placeholder_text="Mail", font=Fuente_General)
-        self.IN_Mail.grid(row=7, column=0, padx=(60, 0), sticky="w", pady=(0, 0))
+        self.IN_Mail.grid(row=7, column=0, padx=(60, 0), sticky="w", pady=(20, 0))
 
 
         # ------------------------------GROUPBOX-------------------------------------------------------------------------
         self.CB_Busqueda = ctk.CTkComboBox(self, width=130, height=30, font=Fuente_General,
-                                           values=["-", "Id", "Nombre", "Tipo"])
+                                           values=["-", "Id", "Nombre"])
         self.CB_Busqueda.place(x=450, y=100)
 
         self.IN_Busqueda = ctk.CTkEntry(self, width=260, height=30, font=Fuente_General, placeholder_text="Busqueda")
@@ -134,12 +134,12 @@ class Clientes(ctk.CTkFrame):
                                          command=lambda: Busqueda(self.IN_Busqueda.get(), self.CB_Busqueda.get()))
         self.BT_Busqueda.place(x=870, y=100)
 
-        columnas = ["ID", "Caracteristicas", "Precio Unitario", "Unidades Disponibles", "Tipo", "Marca"]
+        columnas = ["ID", "DNI", "CUIT", "Nombre", "Direccion", "Telefono", "Correo"]
         self.TV_Busqueda = tkinter.ttk.Treeview(self, columns=columnas, height=18, show="headings")
         self.TV_Busqueda.place(x=500, y=170)
         for col in columnas:
             self.TV_Busqueda.heading(col, text=col)
-            self.TV_Busqueda.column(col, width=122)
+            self.TV_Busqueda.column(col, width=102)
 
         # ---------------------------------Botones de Abajo-------------------------------------------------------------
         self.BTN_Carga = ctk.CTkButton(self, text="Cargar",
@@ -148,7 +148,7 @@ class Clientes(ctk.CTkFrame):
                                                                                     self.IN_Unidades.get(),
                                                                                     self.CB_TipoHard.get(),
                                                                                     self.CB_MarcaHard.get()))
-        self.BTN_Carga.grid(row=8, column=0, padx=(10, 170), sticky="we")
+        self.BTN_Carga.grid(row=8, column=0, padx=(10, 170), sticky="we", pady=(25,0))
 
         self.BTN_Modificar = ctk.CTkButton(self, text="Modificar", font=Fuente_General,
                                            command=lambda: modificar_seleccionado())

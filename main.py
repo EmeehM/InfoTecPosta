@@ -11,7 +11,7 @@ class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("InfoTec")
-        self.maxsize(width=1100, height=600)
+        self.maxsize(width=1000, height=500)
         self.minsize(width=1000, height=500)
         #Dibujado de la pantalla en el centro mas o menos
         screen_width = self.winfo_screenwidth()

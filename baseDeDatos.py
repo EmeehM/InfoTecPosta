@@ -131,14 +131,14 @@ def obtener_tipos():
 
 # -------------------------------------CREACION-------------------------------------------------------------------------
 # Función para añadir un nuevo registro
-def agregar_hardware(caracteristicas, precio_unitario, unidades_disponibles, tipo_hardware_descripcion, marca_descripcion):
+def agregar_hardware(IdHard,caracteristicas, precio_unitario, unidades_disponibles, tipo_hardware_descripcion, marca_descripcion):
     # Insertar en la tabla Hardware
     id_tipohard = tipo_hardware_descripcion[:4]
     id_marca = marca_descripcion[:4]
     cursor.execute(
-        """INSERT INTO Hardware (ID_Tipohard, ID_Marca, Caracteristicas, Precio_Unitario, Unidades_Disponibles)
-           VALUES (?, ?, ?, ?, ?)""",
-        (id_tipohard, id_marca, caracteristicas, precio_unitario, unidades_disponibles)
+        """INSERT INTO Hardware (ID_Hard,ID_Tipohard, ID_Marca, Caracteristicas, Precio_Unitario, Unidades_Disponibles)
+           VALUES (?, ?, ?, ?, ?, ?)""",
+        (IdHard, id_tipohard, id_marca, caracteristicas, precio_unitario, unidades_disponibles)
     )
 
     conn.commit()
