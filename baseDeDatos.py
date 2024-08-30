@@ -145,11 +145,11 @@ def agregar_hardware(IdHard,caracteristicas, precio_unitario, unidades_disponibl
     print("Registro agregado con éxito.")
 
 
-def agregar_marca(nombre):
-    cursor.execute("INSERT INTO Marca(Descripcion) VALUES(?)", (nombre,))
+def agregar_marca(id, nombre):
+    cursor.execute("INSERT INTO Marca(ID_Marca,Descripcion) VALUES(?, ?)", (id, nombre,))
     conn.commit()
 
-def agregar_tipo(nombre):
+def agregar_tipo(id, nombre):
     print(nombre)
-    cursor.execute("INSERT INTO TipoHard(Descripcion) VALUES (?)", (nombre,))
+    cursor.execute("INSERT INTO TipoHard(ID_Tipohard, Descripcion) VALUES (?, ?)", (id, nombre,))
     conn.commit()

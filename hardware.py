@@ -63,7 +63,7 @@ class Hardware(ctk.CTkFrame):
                 self.Dialog = ctk.CTkInputDialog(text="Agregar Nuevo tipo:", title="Tipo de Hardware",)
                 Auxiliar=str(self.Dialog.get_input())
                 print(Auxiliar)
-                baseDeDatos.agregar_tipo(Auxiliar)
+                baseDeDatos.agregar_tipo(ultimosID().get("UltIdTipo"),Auxiliar)
                 TiposDeHard = baseDeDatos.obtener_tipos()
                 TiposDeHard.insert(0, "-")
                 TiposDeHard.append("Agregar")
@@ -72,7 +72,7 @@ class Hardware(ctk.CTkFrame):
         def SeleccionMarca(seleccion):
             if(seleccion == "Agregar"):
                 self.Dialog = ctk.CTkInputDialog(text="Agregar Nueva Marca:", title="Marcas")
-                baseDeDatos.agregar_marca(self.Dialog.get_input())
+                baseDeDatos.agregar_marca(ultimosID().get("UltIdMarca"),self.Dialog.get_input())
                 MarcasDeHard = baseDeDatos.obtener_marca()
                 MarcasDeHard.insert(0, "-")
                 MarcasDeHard.append("Agregar")
@@ -218,11 +218,11 @@ class Hardware(ctk.CTkFrame):
         self.BT_Busqueda.place(x=870, y=100)
 
         columnas = ["ID", "Caracteristicas", "Precio Unitario", "Unidades Disponibles", "Tipo", "Marca"]
-        self.TV_Busqueda = tkinter.ttk.Treeview(self,columns=columnas, height=18, show="headings")
-        self.TV_Busqueda.place(x=500, y=170)
+        self.TV_Busqueda = tkinter.ttk.Treeview(self,columns=columnas, height=13, show="headings")
+        self.TV_Busqueda.place(x=450, y=150)
         for col in columnas:
             self.TV_Busqueda.heading(col, text=col)
-            self.TV_Busqueda.column(col, width=122)
+            self.TV_Busqueda.column(col, width=90)
 
 
         #---------------------------------Botones de Abajo-------------------------------------------------------------
