@@ -33,11 +33,11 @@ class Clientes(ctk.CTkFrame):
                 self.TV_Busqueda.delete(items)
             datos = []
             if (seleccion == "Id"):
-                datos = baseDeDatos.buscar_hardware(id_hard=texto)
+                datos = baseDeDatos.buscar_clientes(id=texto)
             if (seleccion == "Nombre"):
-                datos = baseDeDatos.buscar_hardware(caracteristicas=texto)
-            if (seleccion == "Tipo"):
-                datos = baseDeDatos.buscar_hardware(tipo=texto)
+                datos = baseDeDatos.buscar_clientes(Nombre=texto)
+            if (seleccion == "DNI"):
+                datos = baseDeDatos.buscar_clientes(Dni=texto)
             for fila in datos:
                 self.TV_Busqueda.insert("", "end", values=fila)
 
@@ -50,14 +50,17 @@ class Clientes(ctk.CTkFrame):
                 item_values = self.TV_Busqueda.item(item_id, "values")
 
                 # Aquí item_values debería contener los valores de la fila seleccionada
-                id_hard = item_values[0]
+                id_clientes = item_values[0]
 
                 # Ahora llama a la función para modificar la base de datos
-                baseDeDatos.modificar_hardware(
-                    id_hard,
+                baseDeDatos.modificar_clientes(
+                    id_clientes,
+                    self.IN_DNI.get(),
+                    self.IN_CUIT.get(),
                     self.IN_Nombre.get(),
-                    self.IN_Precio.get(),
-                    self.IN_Unidades.get()
+                    self.IN_Direccion.get(),
+                    self.IN_Telefono.get(),
+                    self.IN_Mail.get()
                 )
                 Busqueda("", "Id")
 
@@ -70,11 +73,12 @@ class Clientes(ctk.CTkFrame):
                 item_values = self.TV_Busqueda.item(item_id, "values")
 
                 # Aquí item_values debería contener los valores de la fila seleccionada
-                id_hard = item_values[0]
+                id_clientes = item_values[0]
 
                 # Ahora llama a la función para eliminar el registro
-                baseDeDatos.eliminar_hardware(id_hard)
+                baseDeDatos.eliminar_clientes(id_clientes)
             Busqueda("", "Id")
+            self.IdCliente.configure(text=f"{ultimoID()}")
 
         # --------------------------Titulo------------------------------------------
         self.titulo = ctk.CTkLabel(self, text="Clientes", text_color="#007090", font=Fuente_Titulos)
@@ -132,7 +136,7 @@ class Clientes(ctk.CTkFrame):
 
         # ------------------------------GROUPBOX-------------------------------------------------------------------------
         self.CB_Busqueda = ctk.CTkComboBox(self, width=130, height=30, font=Fuente_General,
-                                           values=["-", "Id", "Nombre"])
+                                           values=["-", "Id", "Nombre", "DNI"])
         self.CB_Busqueda.place(x=450, y=100)
 
         self.IN_Busqueda = ctk.CTkEntry(self, width=260, height=30, font=Fuente_General, placeholder_text="Busqueda")

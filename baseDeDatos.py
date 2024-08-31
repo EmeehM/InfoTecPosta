@@ -1,5 +1,7 @@
 import sqlite3
 
+import comprobaciones
+
 # Conectar a la base de datos
 conn = sqlite3.connect('HardwareDB.db')
 cursor = conn.cursor()
@@ -26,32 +28,108 @@ def buscar_hardware(caracteristicas=None, tipo=None, id_hard=None):
     resultados = cursor.fetchall()
 
     return resultados
+
 # Función para modificar un registro
 def modificar_hardware(id_hard, nuevas_caracteristicas=None, nuevo_precio=None, nuevas_unidades=None):
+    ban = False
+    cursor.execute("SELECT * FROM Hardware WHERE ID_Hard = ?", (id_hard,))
+    hardwareAux = cursor.fetchall()
     query = "UPDATE Hardware SET"
     params = []
 
     if nuevas_caracteristicas:
-        query += " Caracteristicas = ?,"
-        params.append(nuevas_caracteristicas)
+        if comprobaciones.Comprobacion_Hardware(nuevas_caracteristicas,hardwareAux[0][4],hardwareAux[0][5]):
+            query += " Caracteristicas = ?,"
+            params.append(nuevas_caracteristicas)
+            ban = True
+
 
     if nuevo_precio:
-        query += " Precio_Unitario = ?,"
-        params.append(nuevo_precio)
+        if comprobaciones.Comprobacion_Hardware(hardwareAux[0][3], nuevo_precio, hardwareAux[0][5]):
+            query += " Precio_Unitario = ?,"
+            params.append(nuevo_precio)
+            ban = True
+
 
     if nuevas_unidades:
-        query += " Unidades_Disponibles = ?,"
-        params.append(nuevas_unidades)
+        if comprobaciones.Comprobacion_Hardware(hardwareAux[0][3], hardwareAux[0][4], nuevas_unidades):
+            print(nuevas_unidades)
+            query += " Unidades_Disponibles = ?,"
+            params.append(nuevas_unidades)
+            ban = True
 
-    # Eliminar la última coma
-    query = query.rstrip(',')
+    if ban:
+        # Eliminar la última coma
+        query = query.rstrip(',')
 
-    query += " WHERE ID_Hard = ?"
-    params.append(id_hard)
+        query += " WHERE ID_Hard = ?"
+        params.append(id_hard)
 
-    cursor.execute(query, params)
-    conn.commit()
+        cursor.execute(query, params)
+        conn.commit()
 
+
+def buscar_clientes(id = None, Nombre = None,DNI = None):
+    query = "SELECT * FROM Clientes WHERE 1=1"
+    params = []
+
+    if id:
+        query += " AND ID_Clientes LIKE ?"
+        params.append(f"{id}")
+
+    if Nombre:
+        query += " AND Nombre LIKE ?"
+        params.append(f"{Nombre}")
+
+    if DNI:
+        query += " AND DNI LIKE ?"
+        params.append(f"{DNI}")
+
+    cursor.execute(query,params)
+    resultados = cursor.fetchall()
+
+    return resultados
+
+def modificar_clientes(id,DNI=None,CUIT=None,Nombre=None,Dir=None,Tel=None,Correo=None):
+    cursor.execute("SELECT * FROM Clientes WHERE ID_Clientes = ?", (id,))
+    Clientexd=cursor.fetchall()
+    print(Clientexd[0][1])
+    query = "UPDATE Clientes SET"
+    params = []
+    if DNI:
+        if comprobaciones.Comprobacion_Clientes(DNI,str(Clientexd[0][2]),Clientexd[0][3],Clientexd[0][4],
+                                                str(Clientexd[0][5]),Clientexd[0][6]):
+            query += " DNI = ?,"
+            params.append(DNI)
+            ban = True
+
+    if CUIT:
+        if comprobaciones.Comprobacion_Clientes(str(Clientexd[0][1]), CUIT, Clientexd[0][3], Clientexd[0][4],
+                                                str(Clientexd[0][5]), Clientexd[0][6]):
+            query += " CUIT = ?,"
+            params.append(CUIT)
+            ban = True
+    if Nombre:
+
+            query += " Nombre = ?,"
+            params.append(Nombre)
+            ban = True
+    if Dir:
+        query += " Direccion = ?,"
+        params.append(Dir)
+    if Tel:
+        query += " Telefono = ?,"
+        params.append(Tel)
+    if Correo:
+        query += " Correo = ?,"
+        params.append(Correo)
+    if ban:
+        query = query.rstrip(',')
+        query += "WHERE ID_Clientes = ?"
+        params.append(id)
+
+        cursor.execute(query, params)
+        conn.commit()
 
 
 
@@ -73,7 +151,9 @@ def eliminar_tipo(id_tipo):
     cursor.execute("DELETE FROM TipoHard WHERE Id_Tipohard = ?", (id_tipo,))
     cursor.execute("DELETE FROM Hardware WHERE ID_Tipohard = ?", (id_tipo,))
     conn.commit()
-
+def eliminar_clientes(id_cliente):
+    cursor.execute("DELETE FROM Clientes WHERE ID_Clientes = ?", (id_cliente,))
+    conn.commit()
 
 #----------------------------------OBTENER-------------------------------------------------------
 # Función para obtener los últimos IDs

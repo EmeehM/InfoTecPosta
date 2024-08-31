@@ -4,10 +4,20 @@ import re
 
 
 def Comprobacion_Hardware(Nombre,Precio,Unidades):
-    if(Precio.isdigit() and Unidades.isdigit()):
+    try:
+        x = float(Precio)
+    except ValueError:
+        tkinter.messagebox.showerror(title="Error en el ingreso de datos",
+                                     message="EN LOS CAMPOS PRECIO Y UNIDADES SOLO PUEDEN ESCRIBIRSE NUMEROS")
+        return False
+
+    if(Unidades.isdigit()):
+        Precio = int(Precio)
+        Unidades = int(Unidades)
         if (Nombre != None and len(Nombre) <= 100):
             if (int(Precio) < 100000 and int(Precio) > 0):
                 if (int(Unidades) > 99):
+                    print(int(Unidades))
                     return True
                 else:
                     tkinter.messagebox.showerror(title="Error en el ingreso de datos",
@@ -31,7 +41,6 @@ def Comprobacion_Clientes(DNI,CUIT,Nombre,Dir,Tel,Correo):
         DNI = int(DNI)
         CUIT = int(CUIT)
         Tel = int(Tel)
-        print(Correo)
         patron = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
         if(DNI>10000000 and DNI<99999999):
             if(CUIT>10000000000 and CUIT<99999999999):
