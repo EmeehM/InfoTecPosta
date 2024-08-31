@@ -3,6 +3,7 @@ import tkinter .ttk
 import customtkinter as ctk
 
 import baseDeDatos
+import comprobaciones
 import hardware
 
 
@@ -14,11 +15,18 @@ class Clientes(ctk.CTkFrame):
 
         # ------------Funciones------------------------------
         # CARGA DE ULTIMOS ID
-        ultimosID = baseDeDatos.obtener_ultimos_ids()
-        if (ultimosID["ultimo_id_clientes"] != None):
-            UltIdCliente = ultimosID["ultimo_id_clientes"] + 1
-        else:
-            UltIdCliente = 1000
+        def ultimoID():
+            ultimosIDvar = baseDeDatos.obtener_ultimos_ids()
+            if (ultimosIDvar["ultimo_id_clientes"] != None):
+                UltIdCliente = ultimosIDvar["ultimo_id_clientes"] + 1
+            else:
+                UltIdCliente = 1000
+            return UltIdCliente
+
+        def cargar_cliente(DNI,CUIT,Nombre,Dir,Tel,Correo):
+            if(comprobaciones.Comprobacion_Clientes(DNI,CUIT,Nombre,Dir,Tel,Correo)):
+                baseDeDatos.agregar_cliente(ultimoID(), DNI, CUIT, Nombre, Dir, Tel, Correo)
+                self.IdCliente.configure(text=f"{ultimoID()}")
 
         def Busqueda(texto, seleccion):
             for items in self.TV_Busqueda.get_children():
@@ -88,7 +96,7 @@ class Clientes(ctk.CTkFrame):
         self.CambiarFrameProveedores.grid(row=0, column=3, padx=10)
 
         # -----------------------------------Inputs de datos-----------------------------------------
-        self.IdCliente = ctk.CTkLabel(self, text=f"ID-Cliente: {UltIdCliente} ", font=Fuente_General)
+        self.IdCliente = ctk.CTkLabel(self, text=f"ID-Cliente: {ultimoID()} ", font=Fuente_General)
         self.IdCliente.grid(row=1, column=0, pady=(40, 0), sticky="w",padx=(5,0))
 
         self.LA_DNI = ctk.CTkLabel(self, text="DNI:", font=Fuente_General)
@@ -135,19 +143,20 @@ class Clientes(ctk.CTkFrame):
         self.BT_Busqueda.place(x=870, y=100)
 
         columnas = ["ID", "DNI", "CUIT", "Nombre", "Direccion", "Telefono", "Correo"]
-        self.TV_Busqueda = tkinter.ttk.Treeview(self, columns=columnas, height=18, show="headings")
-        self.TV_Busqueda.place(x=500, y=170)
+        self.TV_Busqueda = tkinter.ttk.Treeview(self, columns=columnas, height=13, show="headings")
+        self.TV_Busqueda.place(x=450, y=150)
         for col in columnas:
             self.TV_Busqueda.heading(col, text=col)
-            self.TV_Busqueda.column(col, width=102)
+            self.TV_Busqueda.column(col, width=75)
 
         # ---------------------------------Botones de Abajo-------------------------------------------------------------
         self.BTN_Carga = ctk.CTkButton(self, text="Cargar",
-                                       command=lambda: baseDeDatos.agregar_hardware(self.IN_Nombre.get(),
-                                                                                    self.IN_Precio.get(),
-                                                                                    self.IN_Unidades.get(),
-                                                                                    self.CB_TipoHard.get(),
-                                                                                    self.CB_MarcaHard.get()))
+                                       command=lambda: cargar_cliente(self.IN_DNI.get(),
+                                                                        self.IN_CUIT.get(),
+                                                                        self.IN_Nombre.get(),
+                                                                        self.IN_Direccion.get(),
+                                                                        self.IN_Telefono.get(),
+                                                                        self.IN_Mail.get()))
         self.BTN_Carga.grid(row=8, column=0, padx=(10, 170), sticky="we", pady=(25,0))
 
         self.BTN_Modificar = ctk.CTkButton(self, text="Modificar", font=Fuente_General,

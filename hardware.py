@@ -142,10 +142,6 @@ class Hardware(ctk.CTkFrame):
             self.CB_MarcaHard.configure(values=MarcasDeHard)
             self.CB_MarcaHard.set(MarcasDeHard[0])
             ultimosID = baseDeDatos.obtener_ultimos_ids()
-            if (ultimosID["ultimo_id_marca"] != None):
-                UltIdMarca = ultimosID["ultimo_id_marca"] + 1
-            else:
-                UltIdMarca = 3000
 
         def eliminar_tipo(tipo):
             baseDeDatos.eliminar_tipo(tipo)
@@ -154,11 +150,6 @@ class Hardware(ctk.CTkFrame):
             TiposDeHard.append("Agregar")
             self.CB_TipoHard.configure(values=TiposDeHard)
             self.CB_TipoHard.set(TiposDeHard[0])
-            ultimosID = baseDeDatos.obtener_ultimos_ids()
-            if (ultimosID["ultimo_id_tipohard"] != None):
-                UltIdTipo = ultimosID["ultimo_id_tipohard"] + 1
-            else:
-                UltIdTipo = 2000
 
         #--------------------------Titulo------------------------------------------
         self.titulo = ctk.CTkLabel(self, text="Hardware", text_color="#007090", font=Fuente_Titulos)

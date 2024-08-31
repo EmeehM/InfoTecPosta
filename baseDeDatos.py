@@ -150,6 +150,9 @@ def agregar_marca(id, nombre):
     conn.commit()
 
 def agregar_tipo(id, nombre):
-    print(nombre)
     cursor.execute("INSERT INTO TipoHard(ID_Tipohard, Descripcion) VALUES (?, ?)", (id, nombre,))
+    conn.commit()
+
+def agregar_cliente(id,DNI,CUIT,Nombre,Dir,Tel,Correo):
+    cursor.execute("INSERT INTO Clientes(ID_Clientes,DNI,CUIT,Nombre,Direccion,Telefono,Correo ) VALUES (?, ?, ?, ?, ?, ?, ?)", (id,DNI,CUIT,Nombre,Dir,Tel,Correo,))
     conn.commit()

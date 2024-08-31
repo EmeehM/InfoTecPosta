@@ -30,7 +30,7 @@ class MainWindow(ctk.CTk):
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame(Hardware)
+        self.show_frame(Clientes)
 
     def show_frame(self, page_class):
         frame = self.frames[page_class]
