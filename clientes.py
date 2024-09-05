@@ -82,7 +82,7 @@ class Clientes(ctk.CTkFrame):
 
         # --------------------------Titulo------------------------------------------
         self.titulo = ctk.CTkLabel(self, text="Clientes", text_color="#007090", font=Fuente_Titulos)
-        self.titulo.grid(row=0, column=0, padx=(5, 360), pady=(0, 20))
+        self.titulo.grid(row=0, column=0, padx=(5, 360))
 
         # --------------------Botones arriba a la derecha---------------------------
         self.controller = controller
@@ -133,6 +133,11 @@ class Clientes(ctk.CTkFrame):
         self.IN_Mail = ctk.CTkEntry(self, placeholder_text="Mail", font=Fuente_General)
         self.IN_Mail.grid(row=7, column=0, padx=(60, 0), sticky="w", pady=(20, 0))
 
+        self.CHK_Socio = ctk.CTkCheckBox(self, text="Socio")
+        self.CHK_Socio.grid(row = 8, column=0, sticky="w",padx=(10,0),pady=(15,0))
+        self.CHK_SocioGerente = ctk.CTkCheckBox(self, text="Socio Gerente")
+        self.CHK_SocioGerente.grid(row=8, column=0, padx=(10,0),pady=(15,0))
+
 
         # ------------------------------GROUPBOX-------------------------------------------------------------------------
         self.CB_Busqueda = ctk.CTkComboBox(self, width=130, height=30, font=Fuente_General,
@@ -161,7 +166,7 @@ class Clientes(ctk.CTkFrame):
                                                                         self.IN_Direccion.get(),
                                                                         self.IN_Telefono.get(),
                                                                         self.IN_Mail.get()))
-        self.BTN_Carga.grid(row=8, column=0, padx=(10, 170), sticky="we", pady=(25,0))
+        self.BTN_Carga.grid(row=9, column=0, padx=(10, 170), sticky="we", pady=(10,0))
 
         self.BTN_Modificar = ctk.CTkButton(self, text="Modificar", font=Fuente_General,
                                            command=lambda: modificar_seleccionado())
