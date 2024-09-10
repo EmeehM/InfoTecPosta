@@ -29,6 +29,7 @@ class Clientes(ctk.CTkFrame):
                 baseDeDatos.agregar_cliente(ultimoID(), DNI, CUIT, Nombre, Dir, Tel, Correo,
                                                 Socio, Gerente)
                 self.IdCliente.configure(text=f"{ultimoID()}")
+            Busqueda("", "Id")
 
         def Busqueda(texto, seleccion):
             for items in self.TV_Busqueda.get_children():
@@ -82,7 +83,7 @@ class Clientes(ctk.CTkFrame):
                 # Ahora llama a la función para eliminar el registro
                 baseDeDatos.eliminar_clientes(id_clientes)
             Busqueda("", "Id")
-            self.IdCliente.configure(text=f"{ultimoID()}")
+            self.IdCliente.configure(text=f"ID-Cliente: {ultimoID()}")
 
         # --------------------------Titulo------------------------------------------
         self.titulo = ctk.CTkLabel(self, text="Clientes", text_color="#007090", font=Fuente_Titulos)
