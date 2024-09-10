@@ -6,6 +6,7 @@ from tkinter import *
 import baseDeDatos
 import clientes
 import comprobaciones
+import proveedores
 
 
 class Hardware(ctk.CTkFrame):
@@ -160,10 +161,10 @@ class Hardware(ctk.CTkFrame):
         self.CambiarFrameCliente = ctk.CTkButton(self, text="Clientes", command=lambda: controller.show_frame(clientes.Clientes),font=Fuente_General)
         self.CambiarFrameCliente.grid(row=0, column=1, padx=10)
 
-        self.CambiarFrameSocios = ctk.CTkButton(self, text="Socios", command=lambda: controller.show_frame(),font=Fuente_General)
+        self.CambiarFrameSocios = ctk.CTkButton(self, text="Proveedores", command=lambda: controller.show_frame(proveedores.Proveedores),font=Fuente_General)
         self.CambiarFrameSocios.grid(row=0, column=2, padx=10)
 
-        self.CambiarFrameProveedores = ctk.CTkButton(self, text="Proveedores", command=lambda: controller.show_frame(),font=Fuente_General)
+        self.CambiarFrameProveedores = ctk.CTkButton(self, text="Ventas", command=lambda: controller.show_frame(),font=Fuente_General)
         self.CambiarFrameProveedores.grid(row=0, column=3, padx=10)
 
         #-----------------------------------Inputs de datos-----------------------------------------

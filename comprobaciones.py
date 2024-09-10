@@ -79,3 +79,42 @@ def Comprobacion_Clientes(DNI,CUIT,Nombre,Dir,Tel,Correo):
         return False
 
     return
+def Comprobacion_Proveedores(CUIT, Nombre, Direccion, Telefono, Correo,Categoria):
+    patron = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    Tel=str(Telefono)
+
+    if not (CUIT.isdigit() and len(CUIT) == 11):
+        tkinter.messagebox.showerror(title="Error en el ingreso de datos",
+                                     message="El CUIT debe ser un número de 11 dígitos sin guiones ni puntos.")
+        return False
+
+    if not (Nombre and len(Nombre) <= 40):
+        tkinter.messagebox.showerror(title="Error en el ingreso de datos",
+                                     message="El Nombre o Razón Social no puede estar vacío y debe tener un máximo de 40 caracteres.")
+        return False
+
+    # Verificación de Dirección: Alfanumérico de 50 caracteres no vacío
+    if not (Direccion and len(Direccion) <= 50):
+        tkinter.messagebox.showerror(title="Error en el ingreso de datos",
+                                     message="La Dirección no puede estar vacía y debe tener un máximo de 50 caracteres.")
+        return False
+
+    # Verificación de Teléfono: Alfanumérico de 20 caracteres, permitiendo guiones
+    if not (Telefono and len(Tel) <= 20):
+        tkinter.messagebox.showerror(title="Error en el ingreso de datos",
+                                     message="El Teléfono debe tener un máximo de 20 caracteres.")
+        return False
+
+    # Verificación de Correo Electrónico: debe contener "@"
+    if not re.match(patron,str(Correo)):
+        tkinter.messagebox.showerror(title="Error en el ingreso de datos",
+                                     message="El Correo Electrónico debe contener un '@'.")
+        return False
+
+    if not (Categoria and len(Categoria) <= 50):
+        tkinter.messagebox.showerror(title="Error en el ingreso de datos",
+                                     message="La categoria debe tener menos de 50 caracteres")
+        return False
+
+
+    return True

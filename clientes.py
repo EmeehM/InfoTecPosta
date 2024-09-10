@@ -5,6 +5,7 @@ import customtkinter as ctk
 import baseDeDatos
 import comprobaciones
 import hardware
+import proveedores
 
 
 class Clientes(ctk.CTkFrame):
@@ -23,9 +24,10 @@ class Clientes(ctk.CTkFrame):
                 UltIdCliente = 1000
             return UltIdCliente
 
-        def cargar_cliente(DNI,CUIT,Nombre,Dir,Tel,Correo):
-            if(comprobaciones.Comprobacion_Clientes(DNI,CUIT,Nombre,Dir,Tel,Correo)):
-                baseDeDatos.agregar_cliente(ultimoID(), DNI, CUIT, Nombre, Dir, Tel, Correo)
+        def cargar_cliente(DNI,CUIT,Nombre,Dir,Tel,Correo,Socio,Gerente):
+            if comprobaciones.Comprobacion_Clientes(DNI, CUIT, Nombre, Dir, Tel, Correo):
+                baseDeDatos.agregar_cliente(ultimoID(), DNI, CUIT, Nombre, Dir, Tel, Correo,
+                                                Socio, Gerente)
                 self.IdCliente.configure(text=f"{ultimoID()}")
 
         def Busqueda(texto, seleccion):
@@ -37,7 +39,9 @@ class Clientes(ctk.CTkFrame):
             if (seleccion == "Nombre"):
                 datos = baseDeDatos.buscar_clientes(Nombre=texto)
             if (seleccion == "DNI"):
-                datos = baseDeDatos.buscar_clientes(Dni=texto)
+                datos = baseDeDatos.buscar_clientes(DNI=texto)
+            if (seleccion == "Socios"):
+                datos = baseDeDatos.buscar_clientes(id=texto, Socio="1")
             for fila in datos:
                 self.TV_Busqueda.insert("", "end", values=fila)
 
@@ -91,11 +95,11 @@ class Clientes(ctk.CTkFrame):
                                                  font=Fuente_General)
         self.CambiarFrameHardWare.grid(row=0, column=1, padx=10)
 
-        self.CambiarFrameSocios = ctk.CTkButton(self, text="Socios", command=lambda: controller.show_frame(),
+        self.CambiarFrameSocios = ctk.CTkButton(self, text="Proveedores", command=lambda: controller.show_frame(proveedores.Proveedores),
                                                 font=Fuente_General)
         self.CambiarFrameSocios.grid(row=0, column=2, padx=10)
 
-        self.CambiarFrameProveedores = ctk.CTkButton(self, text="Proveedores", command=lambda: controller.show_frame(),
+        self.CambiarFrameProveedores = ctk.CTkButton(self, text="Ventas", command=lambda: controller.show_frame(),
                                                      font=Fuente_General)
         self.CambiarFrameProveedores.grid(row=0, column=3, padx=10)
 
@@ -141,7 +145,7 @@ class Clientes(ctk.CTkFrame):
 
         # ------------------------------GROUPBOX-------------------------------------------------------------------------
         self.CB_Busqueda = ctk.CTkComboBox(self, width=130, height=30, font=Fuente_General,
-                                           values=["-", "Id", "Nombre", "DNI"])
+                                           values=["-", "Id", "Nombre", "DNI","Socios"])
         self.CB_Busqueda.place(x=450, y=100)
 
         self.IN_Busqueda = ctk.CTkEntry(self, width=260, height=30, font=Fuente_General, placeholder_text="Busqueda")
@@ -151,12 +155,12 @@ class Clientes(ctk.CTkFrame):
                                          command=lambda: Busqueda(self.IN_Busqueda.get(), self.CB_Busqueda.get()))
         self.BT_Busqueda.place(x=870, y=100)
 
-        columnas = ["ID", "DNI", "CUIT", "Nombre", "Direccion", "Telefono", "Correo"]
+        columnas = ["ID", "DNI", "CUIT", "Nombre", "Direccion", "Telefono", "Correo", "Socio", "Gerente"]
         self.TV_Busqueda = tkinter.ttk.Treeview(self, columns=columnas, height=13, show="headings")
         self.TV_Busqueda.place(x=450, y=150)
         for col in columnas:
             self.TV_Busqueda.heading(col, text=col)
-            self.TV_Busqueda.column(col, width=75)
+            self.TV_Busqueda.column(col, width=58)
 
         # ---------------------------------Botones de Abajo-------------------------------------------------------------
         self.BTN_Carga = ctk.CTkButton(self, text="Cargar",
@@ -165,7 +169,9 @@ class Clientes(ctk.CTkFrame):
                                                                         self.IN_Nombre.get(),
                                                                         self.IN_Direccion.get(),
                                                                         self.IN_Telefono.get(),
-                                                                        self.IN_Mail.get()))
+                                                                        self.IN_Mail.get(),
+                                                                        self.CHK_Socio.get(),
+                                                                        self.CHK_SocioGerente.get()))
         self.BTN_Carga.grid(row=9, column=0, padx=(10, 170), sticky="we", pady=(10,0))
 
         self.BTN_Modificar = ctk.CTkButton(self, text="Modificar", font=Fuente_General,
