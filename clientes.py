@@ -28,7 +28,7 @@ class Clientes(ctk.CTkFrame):
             if comprobaciones.Comprobacion_Clientes(DNI, CUIT, Nombre, Dir, Tel, Correo):
                 baseDeDatos.agregar_cliente(ultimoID(), DNI, CUIT, Nombre, Dir, Tel, Correo,
                                                 Socio, Gerente)
-                self.IdCliente.configure(text=f"{ultimoID()}")
+                self.IdCliente.configure(text=f"ID-Cliente:{ultimoID()}")
             Busqueda("", "Id")
 
         def Busqueda(texto, seleccion):
@@ -65,7 +65,9 @@ class Clientes(ctk.CTkFrame):
                     self.IN_Nombre.get(),
                     self.IN_Direccion.get(),
                     self.IN_Telefono.get(),
-                    self.IN_Mail.get()
+                    self.IN_Mail.get(),
+                    self.CHK_Socio.get(),
+                    self.CHK_SocioGerente.get()
                 )
                 Busqueda("", "Id")
 

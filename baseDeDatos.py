@@ -94,7 +94,8 @@ def buscar_clientes(id = None, Nombre = None,DNI = None , Socio = None):
 
     return resultados
 
-def modificar_clientes(id,DNI=None,CUIT=None,Nombre=None,Dir=None,Tel=None,Correo=None):
+def modificar_clientes(id,DNI=None,CUIT=None,Nombre=None,Dir=None,Tel=None,Correo=None, Socio=None,Gerente=None):
+    ban = False
     cursor.execute("SELECT * FROM Clientes WHERE ID_Clientes = ?", (id,))
     Clientexd=cursor.fetchall()
     query = "UPDATE Clientes SET"
@@ -123,18 +124,29 @@ def modificar_clientes(id,DNI=None,CUIT=None,Nombre=None,Dir=None,Tel=None,Corre
                                                 str(Clientexd[0][5]), Clientexd[0][6]):
             query += " Direccion = ?,"
             params.append(Dir)
+            ban = True
 
     if Tel:
         if comprobaciones.Comprobacion_Clientes(str(Clientexd[0][1]), Clientexd[0][2], Clientexd[0][3], Clientexd[0][4],
                                                 Tel, Clientexd[0][6]):
             query += " Telefono = ?,"
             params.append(Tel)
+            ban = True
 
     if Correo:
         if comprobaciones.Comprobacion_Clientes(str(Clientexd[0][1]), Clientexd[0][2], Clientexd[0][3], Clientexd[0][4],
                                                 Clientexd[0][5], Correo):
             query += " Correo = ?,"
             params.append(Correo)
+            ban = True
+
+    if Socio == 1:
+        ultimosIDvar = obtener_ultimos_ids()
+        print(ultimosIDvar)
+        cursor.execute(
+            "INSERT INTO Socios(ID_Socios,DNI,SocioGerente) VALUES (?, ?, ?)",
+            (ultimosIDvar["ultimo_id_socios"] + 1, Clientexd[0][1], Gerente,))
+        conn.commit()
 
     if ban:
         query = query.rstrip(',')
@@ -169,8 +181,6 @@ def modificar_proveedores(id, CUIT=None, Nombre=None, Dir=None, Tel=None, Correo
     cursor.execute("SELECT * FROM Proveedores WHERE ID_Proveedor = ?", (id,))
     proveedor = cursor.fetchall()
 
-    print(proveedor)
-
     query = "UPDATE Proveedores SET"
     params = []
     ban = False
@@ -197,6 +207,7 @@ def modificar_proveedores(id, CUIT=None, Nombre=None, Dir=None, Tel=None, Correo
                                                    str(proveedor[0][5]), proveedor[0][6]):
             query += " Direccion = ?,"
             params.append(Dir)
+            ban = True
 
     # Validación y actualización de Teléfono
     if Tel:
@@ -204,6 +215,7 @@ def modificar_proveedores(id, CUIT=None, Nombre=None, Dir=None, Tel=None, Correo
                                                    Tel,proveedor[0][5], proveedor[0][6]):
             query += " Telefono = ?,"
             params.append(Tel)
+            ban = True
 
     # Validación y actualización de Correo
     if Correo:
@@ -212,6 +224,7 @@ def modificar_proveedores(id, CUIT=None, Nombre=None, Dir=None, Tel=None, Correo
                                                    Correo, proveedor[0][6]):
             query += " Correo = ?,"
             params.append(Correo)
+            ban = True
 
     # Validación y actualización de Categoría
     if Categoria:

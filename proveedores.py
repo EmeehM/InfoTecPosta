@@ -25,6 +25,7 @@ class Proveedores(ctk.CTkFrame):
             if comprobaciones.Comprobacion_Proveedores(CUIT, Nombre, Dir, Tel, Correo,Categoria):
                 baseDeDatos.agregar_proveedor(ultimoID(), CUIT, Nombre, Dir, Tel, Correo, Categoria)
                 self.IdProveedor.configure(text=f"ID-Proveedor: {ultimoID()}")
+            Busqueda("", "Id")
 
         def Busqueda(texto, seleccion):
             for items in self.TV_Busqueda.get_children():
@@ -62,7 +63,7 @@ class Proveedores(ctk.CTkFrame):
                 id_proveedores = item_values[0]
                 baseDeDatos.eliminar_proveedores(id_proveedores)
             Busqueda("", "Id")
-            self.IdProveedor.configure(text=f"{ultimoID()}")
+            self.IdProveedor.configure(text=f"ID-Proveedor: {ultimoID()}")
 
         # --------------------------Titulo------------------------------------------
         self.titulo = ctk.CTkLabel(self, text="Proveedores", text_color="#007090", font=Fuente_Titulos)

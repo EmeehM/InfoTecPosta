@@ -11,6 +11,7 @@ def Comprobacion_Hardware(Nombre,Precio,Unidades):
                                      message="EN LOS CAMPOS PRECIO Y UNIDADES SOLO PUEDEN ESCRIBIRSE NUMEROS")
         return False
 
+    Unidades = str(Unidades)
     if(Unidades.isdigit()):
         Precio = int(Precio)
         Unidades = int(Unidades)
@@ -37,6 +38,9 @@ def Comprobacion_Hardware(Nombre,Precio,Unidades):
         return False
 
 def Comprobacion_Clientes(DNI,CUIT,Nombre,Dir,Tel,Correo):
+    DNI = str(DNI)
+    CUIT = str(CUIT)
+    Tel = str(Tel)
     if(DNI.isdigit() and CUIT.isdigit() and Tel.isdigit()):
         DNI = int(DNI)
         CUIT = int(CUIT)
@@ -81,6 +85,7 @@ def Comprobacion_Clientes(DNI,CUIT,Nombre,Dir,Tel,Correo):
     return
 def Comprobacion_Proveedores(CUIT, Nombre, Direccion, Telefono, Correo,Categoria):
     patron = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    CUIT = str(CUIT)
     Tel=str(Telefono)
 
     if not (CUIT.isdigit() and len(CUIT) == 11):
