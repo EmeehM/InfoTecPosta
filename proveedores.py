@@ -4,6 +4,7 @@ import baseDeDatos
 import clientes
 import comprobaciones
 import hardware
+import ventas
 
 class Proveedores(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -79,7 +80,7 @@ class Proveedores(ctk.CTkFrame):
                                                   font=Fuente_General)
         self.CambiarFrameHardware.grid(row=0, column=2, padx=10)
 
-        self.CambiarFrameVentas = ctk.CTkButton(self, text="Ventas", command=lambda: controller.show_frame(),
+        self.CambiarFrameVentas = ctk.CTkButton(self, text="Ventas", command=lambda: controller.show_frame(ventas.Ventas),
                                                 font=Fuente_General)
         self.CambiarFrameVentas.grid(row=0, column=3, padx=10)
 

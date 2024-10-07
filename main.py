@@ -3,6 +3,7 @@ import customtkinter as ctk
 from hardware import Hardware
 from clientes import Clientes
 from proveedores import Proveedores
+from ventas import Ventas
 
 #Opciones de apariencia general
 ctk.set_appearance_mode("dark")
@@ -26,7 +27,7 @@ class MainWindow(ctk.CTk):
         container.pack(side="right", fill="both", expand=True)
 
         self.frames = {}
-        for F in (Hardware, Clientes,Proveedores):
+        for F in (Hardware, Clientes,Proveedores,Ventas):
             frame = F(parent=container, controller=self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")

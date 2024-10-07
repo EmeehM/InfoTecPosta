@@ -7,6 +7,7 @@ import baseDeDatos
 import clientes
 import comprobaciones
 import proveedores
+import ventas
 
 
 class Hardware(ctk.CTkFrame):
@@ -164,7 +165,7 @@ class Hardware(ctk.CTkFrame):
         self.CambiarFrameSocios = ctk.CTkButton(self, text="Proveedores", command=lambda: controller.show_frame(proveedores.Proveedores),font=Fuente_General)
         self.CambiarFrameSocios.grid(row=0, column=2, padx=10)
 
-        self.CambiarFrameProveedores = ctk.CTkButton(self, text="Ventas", command=lambda: controller.show_frame(),font=Fuente_General)
+        self.CambiarFrameProveedores = ctk.CTkButton(self, text="Ventas", command=lambda: controller.show_frame(ventas.Ventas),font=Fuente_General)
         self.CambiarFrameProveedores.grid(row=0, column=3, padx=10)
 
         #-----------------------------------Inputs de datos-----------------------------------------
