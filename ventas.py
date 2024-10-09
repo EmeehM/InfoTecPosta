@@ -36,8 +36,33 @@ class Ventas(ctk.CTkFrame):
 
         #-----------------------------------Inputs de datos-----------------------------------------
 
-        self.BTN_Pedido = ctk.CTkButton(self, text="Nuevo Pedido",font=Fuente_General)
+        self.BTN_Pedido = ctk.CTkButton(self, text="Nuevo Pedido",font=Fuente_General,height=50,width=280)
         self.BTN_Pedido.place(x=30, y=100)
+
+        self.BTN_Factura = ctk.CTkButton(self, text="Nueva Factura",font=Fuente_General,height=50,width=280)
+        self.BTN_Factura.place(x=30, y=170)
+
+        self.BTN_Factura = ctk.CTkButton(self, text="Nuevo Pedido",font=Fuente_General,height=50,width=280)
+        self.BTN_Factura.place(x=30, y=240)
+
+
+        #----------------------------------Tabla de pedidos-----------------------------------------
+        self.CB_Busqueda = ctk.CTkComboBox(self, width=130, height=30, font=Fuente_General,
+                                           values=["-", "Pedidos", "Facturas", "Prespuestos"])
+        self.CB_Busqueda.place(x=450, y=100)
+
+        self.IN_Busqueda = ctk.CTkEntry(self, width=260, height=30, font=Fuente_General, placeholder_text="Busqueda")
+        self.IN_Busqueda.place(x=600, y=100)
+
+        self.BT_Busqueda = ctk.CTkButton(self, width=100, text="Buscar", font=Fuente_General,)
+        self.BT_Busqueda.place(x=870, y=100)
+
+        columnas = ["ID", "DNI", "CUIT", "Nombre", "Direccion", "Telefono", "Correo", "Socio", "Gerente"]
+        self.TV_Busqueda = tkinter.ttk.Treeview(self, columns=columnas, height=13, show="headings")
+        self.TV_Busqueda.place(x=450, y=150)
+        for col in columnas:
+            self.TV_Busqueda.heading(col, text=col)
+            self.TV_Busqueda.column(col, width=58)
 
 
 
