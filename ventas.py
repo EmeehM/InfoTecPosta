@@ -7,7 +7,6 @@ import comprobaciones
 import proveedores
 import hardware
 
-
 class Ventas(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
