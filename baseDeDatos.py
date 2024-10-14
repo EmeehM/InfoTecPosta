@@ -177,6 +177,7 @@ def buscar_proveedores(id=None, Nombre=None, CUIT=None):
     resultados = cursor.fetchall()
 
     return resultados
+
 def modificar_proveedores(id, CUIT=None, Nombre=None, Dir=None, Tel=None, Correo=None, Categoria=None):
     cursor.execute("SELECT * FROM Proveedores WHERE ID_Proveedor = ?", (id,))
     proveedor = cursor.fetchall()
@@ -243,6 +244,48 @@ def modificar_proveedores(id, CUIT=None, Nombre=None, Dir=None, Tel=None, Correo
 
         cursor.execute(query, params)
         conn.commit()
+
+def buscar_pedido(id_pedido):
+    cursor.execute('''SELECT * FROM Pedidos WHERE ID_Pedidos = ?''', (id_pedido,))
+    pedido = cursor.fetchone()
+    return pedido
+
+def editar_pedido(id_pedido, nueva_fecha, nueva_condicion):
+    cursor.execute('''UPDATE Pedidos SET Fecha = ?, Condicion = ? 
+                      WHERE ID_Pedidos = ?''', (nueva_fecha, nueva_condicion, id_pedido))
+    conn.commit()
+
+def buscar_detalle_pedido(id_pedido):
+    cursor.execute('''SELECT * FROM Detalle_Pedidos WHERE ID_Pedidos = ?''', (id_pedido,))
+    detalles = cursor.fetchall()
+    return detalles
+
+def editar_detalle_pedido(id_detalle, nueva_cantidad, nuevo_precio_unitario):
+    nuevo_precio_total = nueva_cantidad * nuevo_precio_unitario  # Recalcular el precio total
+    cursor.execute('''UPDATE Detalle_Pedidos SET Cantidad = ?, PrecioUnitario = ?, PrecioTotal = ? 
+                      WHERE ID_Detalle = ?''', (nueva_cantidad, nuevo_precio_unitario, nuevo_precio_total, id_detalle))
+    conn.commit()
+
+def buscar_factura(nro_factura):
+    cursor.execute('''SELECT * FROM Factura WHERE Nro_Factura = ?''', (nro_factura,))
+    factura = cursor.fetchone()
+    return factura
+
+def editar_factura(nro_factura, nueva_forma_pago, nueva_cantidad_cuotas):
+    cursor.execute('''UPDATE Factura SET FormaPago = ?, CantidadCuotas = ? 
+                      WHERE Nro_Factura = ?''', (nueva_forma_pago, nueva_cantidad_cuotas, nro_factura))
+    conn.commit()
+
+def buscar_presupuesto(nro_presupuesto):
+    cursor.execute('''SELECT * FROM Presupuestos WHERE Nro_Presupuesto = ?''', (nro_presupuesto,))
+    presupuesto = cursor.fetchone()
+    return presupuesto
+
+def editar_presupuesto(nro_presupuesto, nueva_forma_pago, nueva_cantidad_cuotas):
+    cursor.execute('''UPDATE Presupuestos SET FormaPago = ?, CantidadCuotas = ? 
+                      WHERE Nro_Presupuesto = ?''', (nueva_forma_pago, nueva_cantidad_cuotas, nro_presupuesto))
+    conn.commit()
+
 #-------------------------------------------ELIMINAR-------------------------------------------------------------------
 # Función para eliminar un registro
 def eliminar_hardware(id_hard):
@@ -261,6 +304,7 @@ def eliminar_tipo(id_tipo):
     cursor.execute("DELETE FROM TipoHard WHERE Id_Tipohard = ?", (id_tipo,))
     cursor.execute("DELETE FROM Hardware WHERE ID_Tipohard = ?", (id_tipo,))
     conn.commit()
+
 def eliminar_clientes(id_cliente):
     cursor.execute("DELETE FROM Clientes WHERE ID_Clientes = ?", (id_cliente,))
     conn.commit()
@@ -268,8 +312,24 @@ def eliminar_clientes(id_cliente):
 def eliminar_proveedores(id_cliente):
     cursor.execute("DELETE FROM Proveedores WHERE ID_Proveedor = ?", (id_cliente,))
     conn.commit()
+
+def eliminar_pedido(id_pedido):
+    cursor.execute('''DELETE FROM Pedidos WHERE ID_Pedidos = ?''', (id_pedido,))
+    conn.commit()
+
+def eliminar_factura(nro_factura):
+    cursor.execute('''DELETE FROM Factura WHERE Nro_Factura = ?''', (nro_factura,))
+    conn.commit()
+
+def eliminar_detalle_pedido(id_detalle):
+    cursor.execute('''DELETE FROM Detalle_Pedidos WHERE ID_Detalle = ?''', (id_detalle,))
+    conn.commit()
+
+def eliminar_presupuesto(nro_presupuesto):
+    cursor.execute('''DELETE FROM Presupuestos WHERE Nro_Presupuesto = ?''', (nro_presupuesto,))
+    conn.commit()
+
 #----------------------------------------------OBTENER------------------------------------------------------------------
-# Función para obtener los últimos IDs
 def obtener_ultimos_ids():
     # Obtener el último ID de Hardware
     cursor.execute("SELECT MAX(ID_Hard) FROM Hardware")
@@ -283,24 +343,45 @@ def obtener_ultimos_ids():
     cursor.execute("SELECT MAX(ID_Tipohard) FROM TipoHard")
     ultimo_id_tipohard = cursor.fetchone()[0]
 
-    # Obtener el último ID de TipoHard
+    # Obtener el último ID de Clientes
     cursor.execute("SELECT MAX(ID_Clientes) FROM Clientes")
     ultimo_id_clientes = cursor.fetchone()[0]
 
+    # Obtener el último ID de Socios
     cursor.execute("SELECT MAX(ID_Socios) FROM Socios")
     ultimo_id_socios = cursor.fetchone()[0]
 
+    # Obtener el último ID de Proveedores
     cursor.execute("SELECT MAX(ID_Proveedor) FROM Proveedores")
-    ultimos_id_proveedores = cursor.fetchone()[0]
+    ultimo_id_proveedores = cursor.fetchone()[0]
 
+    # Obtener el último ID de Pedidos
+    cursor.execute("SELECT MAX(ID_Pedidos) FROM Pedidos")
+    ultimo_id_pedidos = cursor.fetchone()[0]
+
+    # Obtener el último ID de Detalle_Pedidos
+    cursor.execute("SELECT MAX(ID_Detalle) FROM Detalle_Pedidos")
+    ultimo_id_detalle_pedidos = cursor.fetchone()[0]
+
+    # Obtener el último ID de Factura
+    cursor.execute("SELECT MAX(Nro_Factura) FROM Factura")
+    ultimo_id_factura = cursor.fetchone()[0]
+
+    # Obtener el último ID de Presupuestos
+    cursor.execute("SELECT MAX(Nro_Presupuesto) FROM Presupuestos")
+    ultimo_id_presupuesto = cursor.fetchone()[0]
 
     return {
         "ultimo_id_hardware": ultimo_id_hardware,
         "ultimo_id_tipohard": ultimo_id_tipohard,
         "ultimo_id_marca": ultimo_id_marca,
         "ultimo_id_clientes": ultimo_id_clientes,
-        "ultimo_id_socios" : ultimo_id_socios,
-        "ultimo_id_proveedores" : ultimos_id_proveedores
+        "ultimo_id_socios": ultimo_id_socios,
+        "ultimo_id_proveedores": ultimo_id_proveedores,
+        "ultimo_id_pedidos": ultimo_id_pedidos,
+        "ultimo_id_detalle_pedidos": ultimo_id_detalle_pedidos,
+        "ultimo_id_factura": ultimo_id_factura,
+        "ultimo_id_presupuesto": ultimo_id_presupuesto
     }
 
 def obtener_marca():
@@ -330,6 +411,25 @@ def obtener_tipos():
         i = i+1
     return lista_tipos
 
+def buscar_todos_detalle_pedidos():
+    cursor.execute('''SELECT * FROM Detalle_Pedidos''',)
+    detalles = cursor.fetchall()
+    return detalles
+
+def buscar_todas_facturas():
+    cursor.execute('''SELECT * FROM Factura''',)
+    factura = cursor.fetchone()
+    return factura
+
+def buscar_todos_presupuestos():
+    cursor.execute('''SELECT * FROM Presupuestos''',)
+    presupuesto = cursor.fetchone()
+    return presupuesto
+
+def buscar_todos_pedidos():
+    cursor.execute('''SELECT * FROM Pedidos''',)
+    pedido = cursor.fetchall()
+    return pedido
 # -------------------------------------CREACION-------------------------------------------------------------------------
 # Función para añadir un nuevo registro
 def agregar_hardware(IdHard,caracteristicas, precio_unitario, unidades_disponibles, tipo_hardware_descripcion,
@@ -373,6 +473,7 @@ def agregar_cliente(id,DNI,CUIT,Nombre,Dir,Tel,Correo,Socio,Gerente):
                                      message= f"ERROR DE INTEGRIDAD DEDATOS,REVISAR SI LOS DATOS SON UNICOS, {er.sqlite_errorname}")
 
 def agregar_proveedor(id_proveedor, CUIT, Nombre, Dir, Tel, Correo, Categoria):
+
     # Obtener el último ID de socios o asignar un valor por defecto
     if obtener_ultimos_ids()["ultimo_id_socios"] is not None:
         UltimoIDSocio = obtener_ultimos_ids()["ultimo_id_socios"]
@@ -390,3 +491,26 @@ def agregar_proveedor(id_proveedor, CUIT, Nombre, Dir, Tel, Correo, Categoria):
     except sqlite3.IntegrityError as er:
         tkinter.messagebox.showerror(title="Error en el ingreso de datos",
                                      message=f"ERROR DE INTEGRIDAD DE DATOS, REVISAR SI LOS DATOS SON ÚNICOS. Error: {er.sqlite_errorname}")
+        
+def crear_pedido(id_cliente, nombre_cliente, fecha, condicion):
+    cursor.execute('''INSERT INTO Pedidos (ID_Clientes, NombreCliente, Fecha, Condicion) 
+                      VALUES (?, ?, ?, ?)''', (id_cliente, nombre_cliente, fecha, condicion))
+    conn.commit()
+
+def crear_detalle_pedido(id_pedido, id_hard, nombre_prod, cantidad, stock, precio_unitario):
+    cursor = conn.cursor()
+    cursor.execute('''INSERT INTO Detalle_Pedidos (ID_Pedidos, ID_Hard, NombreProd, Cantidad, Stock, PrecioUnitario, PrecioTotal)
+                      VALUES (?, ?, ?, ?, ?, ?, ?)''', (id_pedido, id_hard, nombre_prod, cantidad, stock, precio_unitario, precio_total))
+    conn.commit()
+
+def crear_factura(id_cliente, nombre_cliente, fecha, monto_final, monto_total, forma_pago, cantidad_cuotas, id_pedido):
+    cursor.execute('''INSERT INTO Factura (ID_Cliente, NombreCliente, Fecha, MontoFinal, MontoTotal, FormaPago, CantidadCuotas, ID_Pedidos)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', 
+                   (id_cliente, nombre_cliente, fecha, monto_final, monto_total, forma_pago, cantidad_cuotas, id_pedido))
+    conn.commit()
+
+def crear_presupuesto(fecha, monto_final, monto_total, forma_pago, cantidad_cuotas, id_pedido):
+    cursor.execute('''INSERT INTO Presupuestos (Fecha, MontoFinal, MontoTotal, FormaPago, CantidadCuotas, ID_Pedidos)
+                      VALUES (?, ?, ?, ?, ?, ?)''', 
+                   (fecha, monto_final, monto_total, forma_pago, cantidad_cuotas, id_pedido))
+    conn.commit()

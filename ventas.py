@@ -53,18 +53,22 @@ class Ventas(ctk.CTkFrame):
         self.LA_TituloUltimosPed = ctk.CTkLabel(self, text='Últimos pedidos:', font=Fuente_Caja)
         self.LA_TituloUltimosPed.place(x=380, y=100)
 
-        test = baseDeDatos.obtener_ultimos_ids()  # Get the latest IDs from the database
-        j = 1
-        for i in test:
-            nombrecompleto = 'a' + str(j)
-            print(nombrecompleto)
-            Ban += 1
-            print(Ban)
+        PedidosLista = []
+        PedidosLista = baseDeDatos.buscar_todos_pedidos()
+        print(PedidosLista)
+        if PedidosLista != None:
+            j = 1
+            for i in PedidosLista:
+                nombrecompleto = 'a' + str(j)
+                print(nombrecompleto)
+                Ban += 1
+                print(Ban)
 
-            label = ctk.CTkLabel(self, text=i, font=Fuente_General)
-            setattr(self, nombrecompleto, label)
-            label.place(x=380, y=150 + 50 * (j - 1))  # Adjust position dynamically
-            j += 1
+                label = ctk.CTkLabel(self, text=i, font=Fuente_General)
+                setattr(self, nombrecompleto, label)
+                label.place(x=380, y=150 + 50 * (j - 1))  
+                j += 1
+        
 
         #------------------------------------Caja------------------------------------
         self.LA_TituloCaja = ctk.CTkLabel(self, text='Caja diaria', font=Fuente_Titulos, text_color='#007090')
