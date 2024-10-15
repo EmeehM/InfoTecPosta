@@ -430,6 +430,15 @@ def buscar_todos_pedidos():
     cursor.execute('''SELECT * FROM Pedidos''',)
     pedido = cursor.fetchall()
     return pedido
+
+def buscar_todos_clientes():
+    cursor.execute("SELECT * FROM ClientesSocios")
+    resultados = cursor.fetchall()
+    return resultados
+def buscar_todos_hardware():
+    cursor.execute("SELECT * FROM Hardware")
+    resultados = cursor.fetchall()
+    return resultados
 # -------------------------------------CREACION-------------------------------------------------------------------------
 # Función para añadir un nuevo registro
 def agregar_hardware(IdHard,caracteristicas, precio_unitario, unidades_disponibles, tipo_hardware_descripcion,
