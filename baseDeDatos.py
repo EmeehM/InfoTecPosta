@@ -506,16 +506,16 @@ def crear_pedido(id_cliente, nombre_cliente, fecha, condicion):
                       VALUES (?, ?, ?, ?)''', (id_cliente, nombre_cliente, fecha, condicion))
     conn.commit()
 
-def crear_detalle_pedido(id_pedido, id_hard, nombre_prod, cantidad, stock, precio_unitario):
+def crear_detalle_pedido(id_pedido, id_hard, nombre_prod, cantidad, stock, precio_unitario,precio_total):
     cursor = conn.cursor()
     cursor.execute('''INSERT INTO Detalle_Pedidos (ID_Pedidos, ID_Hard, NombreProd, Cantidad, Stock, PrecioUnitario, PrecioTotal)
                       VALUES (?, ?, ?, ?, ?, ?, ?)''', (id_pedido, id_hard, nombre_prod, cantidad, stock, precio_unitario, precio_total))
     conn.commit()
 
-def crear_factura(id_cliente, nombre_cliente, fecha, monto_final, monto_total, forma_pago, cantidad_cuotas, id_pedido):
-    cursor.execute('''INSERT INTO Factura (ID_Cliente, NombreCliente, Fecha, MontoFinal, MontoTotal, FormaPago, CantidadCuotas, ID_Pedidos)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', 
-                   (id_cliente, nombre_cliente, fecha, monto_final, monto_total, forma_pago, cantidad_cuotas, id_pedido))
+def crear_factura(id_cliente, nombre_cliente, fecha, monto_final, monto_total, forma_pago, id_pedido):
+    cursor.execute('''INSERT INTO Factura (ID_Cliente, NombreCliente, Fecha, MontoFinal, MontoTotal, FormaPago, ID_Pedidos)
+                      VALUES (?, ?, ?, ?, ?, ?, ?)''', 
+                   (id_cliente, nombre_cliente, fecha, monto_final, monto_total, forma_pago, id_pedido))
     conn.commit()
 
 def crear_presupuesto(fecha, monto_final, monto_total, forma_pago, cantidad_cuotas, id_pedido):
