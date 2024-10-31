@@ -15,6 +15,8 @@ class MainWindow(ctk.CTk):
         self.title("InfoTec")
         self.maxsize(width=1000, height=500)
         self.minsize(width=1000, height=500)
+        self.iconbitmap("Infotech_icon.ico")
+        ctk.deactivate_automatic_dpi_awareness()
         #Dibujado de la pantalla en el centro mas o menos
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()

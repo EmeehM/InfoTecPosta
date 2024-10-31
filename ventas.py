@@ -16,9 +16,11 @@ class BuscarPedido(ctk.CTkToplevel):
         self.controller = controller
         self.title("Nueva Factura")
         self.geometry("600x500")
+        self.iconbitmap("Infotech_icon.ico")
         self.maxsize(width=600, height=500)
         self.minsize(width=600, height=500)
         self.grab_set()
+        datos = []
 
         fuente_general = ctk.CTkFont(family="Lucida Grande", size=20)
         Fuente_Titulos = ctk.CTkFont(family="Segoe UI", size=36, underline=True)
@@ -38,23 +40,28 @@ class BuscarPedido(ctk.CTkToplevel):
             label_estado_pedido.configure(text=f"Estado de Pedido : {datosPedido[4]}")
             label_fecha_hora.configure(text=f"Fecha y Hora:{datosPedido[3]} ")
             i=0
+            #-----------------TABLA--------------------------------------
+            for items in self.TV_Busqueda.get_children():
+                self.TV_Busqueda.delete(items)
+            for items in ProductosAgregados:
+                datos.append((ProductosAgregados[i][3],ProductosAgregados[i][4],ProductosAgregados[i][6],ProductosAgregados[i][7]))
+                i = i+1
+            for fila in datos:
+                self.TV_Busqueda.insert("", "end", values=fila) 
+            
+            datos.clear()
+            #----------------------------------------------------------
             MontoTotal = 0
-            print(ProductosAgregados)
-            for producto in ProductosAgregados:
-                    altura = 330 +(30 * i)
-                    label = ctk.CTkLabel(self, text=f"{ProductosAgregados[i][3]}, {ProductosAgregados[i][4]}, {ProductosAgregados[i][6]}, {ProductosAgregados[i][7]}   " , font=fuente_general)
-                    setattr(self,"Productos", label)
-                    label.place(x=30, y=altura)
+            i=0
+            for producto in ProductosAgregados: 
                     MontoTotal = MontoTotal + ProductosAgregados[i][7]
-                    i = i+1
-                    print(i)
             label_monto_total.configure(text=f"Monto Total : {MontoTotal}")
             label_monto_final.configure(text=f"Monto Final : {MontoTotal * 1.21}")
 
             
 
-        LA_TituloPed = ctk.CTkLabel(self,text="Buscar Pedidos",font=Fuente_Titulos)
-        LA_TituloPed.place(x=230, y=10)
+        LA_TituloPed = ctk.CTkLabel(self,text="Buscar Pedidos",font=Fuente_Titulos,text_color="#007090")
+        LA_TituloPed.place(x=210, y=10)
 
         label_estado_pedido = ctk.CTkLabel(self, text=f"Estado de Pedido :", font=fuente_general)
         label_estado_pedido.place(x=30, y=80)
@@ -78,13 +85,16 @@ class BuscarPedido(ctk.CTkToplevel):
         label_fecha_hora = ctk.CTkLabel(self, text=f"Fecha y Hora: ", font=fuente_general)
         label_fecha_hora.place(x=30, y=260)
 
-        label_Detalles = ctk.CTkLabel(self, text="Nombre------- Cantidad ---------PrecioU --------------PrecioTot")
-        label_Detalles.place(x=10,y=290)
-        # Función para agregar el pedido y los detalles
+        columnas = ["Nombre", "Cantidad", "Precio U", "Precio Total"]
+        self.TV_Busqueda = ttk.Treeview(self, columns=columnas, height=8, show="headings")
+        self.TV_Busqueda.place(x=10, y=290)
+        for col in columnas:
+            self.TV_Busqueda.heading(col, text=col)
+            self.TV_Busqueda.column(col, width=80)
 
-        label_monto_total = ctk.CTkLabel(self,text="Monto Total : ")
+        label_monto_total = ctk.CTkLabel(self,text="Monto Total : ",font=fuente_general)
         label_monto_total.place(x=370,y=290)
-        label_monto_final = ctk.CTkLabel(self,text="Monto Final : ")
+        label_monto_final = ctk.CTkLabel(self,text="Monto Final : ",font=fuente_general)
         label_monto_final.place(x=370,y=340)
 
 class CancelarPedido(ctk.CTkToplevel):
@@ -93,6 +103,7 @@ class CancelarPedido(ctk.CTkToplevel):
         self.controller = controller
         self.title("Detalles de Pedido")
         self.geometry("300x300")
+        self.iconbitmap("Infotech_icon.ico")
         self.maxsize(width=300, height=300)
         self.minsize(width=300, height=300)
         self.grab_set()
@@ -100,21 +111,16 @@ class CancelarPedido(ctk.CTkToplevel):
         def obtener_pedidos():
             clientes = baseDeDatos.buscar_todos_pedidos()
             lista_clientes = []
-            print(clientes)
             for cliente in clientes:
-                print(cliente[4])
                 if cliente[4] != "Cancelado":
-                    print("true")
                     lista_clientes.append(f"{cliente[0]} - {cliente[2]}")     
             lista_clientes.insert(0,"-") 
-            print(lista_clientes)
             return lista_clientes
 
 
         def EliminarSel(event):
             seleccion = combo_pedidos.get().split(" - ")
             PedidoSeleccionado = baseDeDatos.buscar_pedido(seleccion[0])
-            print(PedidoSeleccionado)
             if messagebox.askyesno(title="Eliminar Pedido", message="Desea Eliminar Este pedido?"):
                 baseDeDatos.editar_pedido(id_pedido=PedidoSeleccionado[0],nueva_condicion="Cancelado",nueva_fecha=PedidoSeleccionado[3])
                 self.destroy()
@@ -128,11 +134,12 @@ class CancelarPedido(ctk.CTkToplevel):
         combo_pedidos.place(x=100,y=150)
 
 class PedidoDetalles(ctk.CTkToplevel):
-    def __init__(self, parent,id_pedido, controller):
+    def __init__(self, parent,id_pedido, controller,id_cliente_seleccionado,fecha_actual):
         super().__init__(parent)
         self.controller = controller
         self.title("Detalles de Pedido")
         self.geometry("600x500")
+        self.iconbitmap("Infotech_icon.ico")
         self.maxsize(width=600, height=500)
         self.minsize(width=600, height=500)
         self.grab_set()    
@@ -140,8 +147,21 @@ class PedidoDetalles(ctk.CTkToplevel):
         fuente_general = ctk.CTkFont(family="Lucida Grande", size=20)
         Fuente_Titulos = ctk.CTkFont(family="Segoe UI", size=36, underline=True)
         i = 1
+        Ban = 0
         ProductosAgregados = []
+        datos = []
 
+        #-------------------PRIMERA CARGA--------------------------------
+        if baseDeDatos.buscar_pedido(id_pedido=id_pedido) != None:
+            ProductosAgregados = baseDeDatos.buscar_detalle_pedido(id_pedido=id_pedido)
+            #for items in productos meter en datos
+            for items in self.TV_Busqueda.get_children():
+                self.TV_Busqueda.delete(items)
+            for fila in datos:
+                self.TV_Busqueda.insert("", "end", values=fila)
+            print("a")
+
+        #---------------------------------------------------------------
         def obtener_productos():
             productos = baseDeDatos.buscar_todos_hardware()
             lista_productos = [f"{producto[0]} - {producto[3]}" for producto in productos]
@@ -150,25 +170,25 @@ class PedidoDetalles(ctk.CTkToplevel):
             return lista_productos
 
         def agregar_producto():
-            print(ProductosAgregados)
             i=int(len(ProductosAgregados))
-            print(i)
             Hardware = baseDeDatos.buscar_hardware(id_hard=IDHard.get().split(" - ")[0])
-            Componente.configure(text=f"Nombre : {Hardware[0][1]}")
-            Stock.configure(text=f"Stock disponible : {Hardware[0][3]}")
-            PrecioUnitario.configure(text=f"Precio Unitario : {Hardware[0][2]}")
-            PrecioTotal.configure(text=f"Precio Total : {Hardware[0][2] * int(Cantidad.get())}")
-            ProductosAgregados.append([IDHard.get().split(" - ")[1],Cantidad.get()])
-            print(ProductosAgregados)
-            altura = 330 +(30 * i) 
-            baseDeDatos.crear_detalle_pedido(id_pedido,IDHard.get().split(" - ")[0],IDHard.get().split(" - ")[1],Cantidad.get(),Stock.cget("text").split(" : ")[1]
-                                             ,PrecioUnitario.cget("text").split(" : ")[1],PrecioTotal.cget("text").split(" : ")[1])
-            messagebox.showinfo(title="Producto Cargado!",message="Producto cargado con exito!")
-            
-            label = ctk.CTkLabel(self, text=ProductosAgregados[-1], font=fuente_general)
-            setattr(self, str(ProductosAgregados), label)
-            label.place(x=30, y=altura)
+            if int(Hardware[0][3]) >= int(Cantidad.get()):
+                Stock.configure(text=f"Stock disponible : {Hardware[0][3]}")
+                PrecioUnitario.configure(text=f"Precio Unitario : {Hardware[0][2]}")
+                PrecioTotal.configure(text=f"Precio Total : {Hardware[0][2] * int(Cantidad.get())}")
+                ProductosAgregados.append([id_pedido,IDHard.get().split(" - ")[0],IDHard.get().split(" - ")[1],Cantidad.get(),Stock.cget("text").split(" : ")[1]
+                                                ,PrecioUnitario.cget("text").split(" : ")[1],PrecioTotal.cget("text").split(" : ")[1]])
+                
+                messagebox.showinfo(title="Producto Cargado!",message="Producto cargado con exito!")
 
+                datos.append((Hardware[0][0],Hardware[0][1],Hardware[0][3],Cantidad.get()))
+                for items in self.TV_Busqueda.get_children():
+                    self.TV_Busqueda.delete(items)
+                for fila in datos:
+                    self.TV_Busqueda.insert("", "end", values=fila)
+            else:
+                messagebox.showerror(title="Stock Insuficiente",message="No tiene suficiente stock de este producto!")
+                
         def manejar_seleccion_Hard(event):
             seleccion = []
             seleccion = IDHard.get().split(" - ")
@@ -189,46 +209,71 @@ class PedidoDetalles(ctk.CTkToplevel):
 
         def Cerrar():
             if messagebox.askokcancel(title="Cerrar",message="Cerrar todo?") :
-                PedidoNuevo.destroy(parent)
-                self.destroy()
+                if datos != None and datos != [] and datos != "None":
+                    baseDeDatos.crear_pedido(id_cliente_seleccionado[0],id_cliente_seleccionado[1] , fecha_actual, "Registrado")
+                    i=0
+                    for items in ProductosAgregados:
+                        baseDeDatos.crear_detalle_pedido(ProductosAgregados[i][0],ProductosAgregados[i][1],ProductosAgregados[i][2],ProductosAgregados[i][3],
+                                                         ProductosAgregados[i ][4],ProductosAgregados[i][5],ProductosAgregados[i][6])
+                        i = i + 1
+                    PedidoNuevo.destroy(parent)
+                    self.destroy()
+                #else:
+                    #messagebox.showerror(title="Agregar Productos",message="Añada por lo menos 1 producto al pedido!")
+                
+        
+        def Editar():
+            item_id = self.TV_Busqueda.focus()
+            if item_id:
+                item_values = self.TV_Busqueda.item(item_id, "values")
+                id_detallePed = item_values[0]
             
 
-        Titulo = ctk.CTkLabel(self,text=f"Agregar el hardware que requiera al pedido: {id_pedido}",font=fuente_general)
-        Titulo.place(x=10, y=10)
+        Titulo = ctk.CTkLabel(self,text=f"Hardware al pedido: {id_pedido}",font=Fuente_Titulos)
+        Titulo.place(x=10, y=8)
 
+        LBL_Cantidad = ctk.CTkLabel(self,text="Cantidad:",font=fuente_general)
+        LBL_Cantidad.place(x=10,y=60)
+        Cantidad = ctk.CTkEntry(self,placeholder_text="Cantidad",font=fuente_general)
+        Cantidad.place(x=100,y=60)
+
+        Componente = ctk.CTkLabel(self,text=f"Nombre: ",font=fuente_general)
+        Componente.place(x=250,y=60)
         lista_hard=obtener_productos()
         IDHard = ctk.CTkComboBox(self,values=lista_hard,command=manejar_seleccion_Hard)
-        IDHard.place(x=10,y=60)
+        IDHard.place(x=330,y=60)
 
-        Componente = ctk.CTkLabel(self,text=f"Nombre: ")
-        Componente.place(x=10,y=100)
+        PrecioUnitario = ctk.CTkLabel(self,text="Precio Unitario: ",font=fuente_general)
+        PrecioUnitario.place(x=10,y=100)
 
-        Cantidad = ctk.CTkEntry(self,placeholder_text="Cantidad")
-        Cantidad.place(x=10,y=140)
+        PrecioTotal = ctk.CTkLabel(self,text="Precio total: ",font=fuente_general)
+        PrecioTotal.place(x=10,y=140)
         
-        Stock = ctk.CTkLabel(self,text="Stock disponible: ")
-        Stock.place(x=10,y=180)
+        Stock = ctk.CTkLabel(self,text="Stock disponible: ",font=fuente_general)
+        Stock.place(x=250,y=100)
         
-        PrecioUnitario = ctk.CTkLabel(self,text="Precio Unitario: ")
-        PrecioUnitario.place(x=10,y=220)
+        AgregarProd = ctk.CTkButton(self,text="Agregar Producto",command=agregar_producto,font=fuente_general)
+        AgregarProd.place(x=10,y=180)
 
-        PrecioTotal = ctk.CTkLabel(self,text="Precio total: ")
-        PrecioTotal.place(x=10,y=260)
-        
-        label_Detalles = ctk.CTkLabel(self, text="Nombre------- Cantidad")
-        label_Detalles.place(x=10,y=320)
+        columnas = ["ID","Nombre","Stock Disponible","Cantidad Pedida"]
+        self.TV_Busqueda = ttk.Treeview(self, columns=columnas, height=8, show="headings")
+        self.TV_Busqueda.place(x=10, y=240)
+        for col in columnas:
+            self.TV_Busqueda.heading(col, text=col)
+            self.TV_Busqueda.column(col, width=75)
 
-        AgregarProd = ctk.CTkButton(self,text="Agregar Producto",command=agregar_producto)
-        AgregarProd.place(x=10,y=290)
-
-        CerrarBTN = ctk.CTkButton(self,text="Finalizar",command=Cerrar)
-        CerrarBTN.place(x=10,y=450)
+        EditarBTN = ctk.CTkButton(self,text="Editar", command=Editar,font=fuente_general)
+        EditarBTN.place(x=10,y=450)
+        EliminarBTN = ctk.CTkButton(self,text="Eliminar",font=fuente_general)
+        CerrarBTN = ctk.CTkButton(self,text="Finalizar",command=Cerrar,font=fuente_general,fg_color="#c0392b", hover_color="#e74c3c")
+        CerrarBTN.place(x=400,y=450)
 
 class PedidoNuevo(ctk.CTkToplevel):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
         self.title("Nuevo Pedido")
+        self.iconbitmap("Infotech_icon.ico")
         self.geometry("600x500")
         self.maxsize(width=600, height=500)
         self.minsize(width=600, height=500)
@@ -296,8 +341,7 @@ class PedidoNuevo(ctk.CTkToplevel):
                 messagebox.showwarning(title="Error",message="SELECCIONE UN CLIENTE") 
             elif messagebox.askyesno(title="Cambiando de Ventana",message="Esta seguro de que los datos son correctos?") :
                 id_cliente_seleccionado = combo_clientes.get().split(" - ")
-                baseDeDatos.crear_pedido(id_cliente_seleccionado[0],id_cliente_seleccionado[1] , fecha_actual, "Registrado")
-                PedidoDetalles(self, nuevo_id_pedido, controller)           
+                PedidoDetalles(self, nuevo_id_pedido, controller, id_cliente_seleccionado, fecha_actual)       
             else:
                 print("Canceled")
             
@@ -316,10 +360,12 @@ class FacturaNuevo(ctk.CTkToplevel):
         self.controller = controller
         self.title("Nueva Factura")
         self.geometry("600x500")
+        self.iconbitmap("Infotech_icon.ico")
         self.maxsize(width=600, height=500)
         self.minsize(width=600, height=500)
         self.grab_set()
 
+        datos = []
         fuente_general = ctk.CTkFont(family="Lucida Grande", size=20)
         Fuente_Titulos = ctk.CTkFont(family="Segoe UI", size=36, underline=True)
 
@@ -345,15 +391,21 @@ class FacturaNuevo(ctk.CTkToplevel):
             ProductosAgregados = baseDeDatos.buscar_detalle_pedido(datosPedido[0])
             i=0
             MontoTotal = 0
-            print(ProductosAgregados)
+            #-----------------TABLA--------------------------------------
+            for items in self.TV_Busqueda.get_children():
+                self.TV_Busqueda.delete(items)
+            for items in ProductosAgregados:
+                datos.append((ProductosAgregados[i][3],ProductosAgregados[i][4],ProductosAgregados[i][5],ProductosAgregados[i][6],ProductosAgregados[i][7]))
+                i = i+1
+            for fila in datos:
+                self.TV_Busqueda.insert("", "end", values=fila) 
+            
+            datos.clear()
+            #---------------------------------------------------------
+            i=0
             for producto in ProductosAgregados:
-                    altura = 330 +(30 * i)
-                    label = ctk.CTkLabel(self, text=f"{ProductosAgregados[i][3]}, {ProductosAgregados[i][4]}, {ProductosAgregados[i][6]}, {ProductosAgregados[i][7]}   " , font=fuente_general)
-                    setattr(self,"Productos", label)
-                    label.place(x=30, y=altura)
                     MontoTotal = MontoTotal + ProductosAgregados[i][7]
                     i = i+1
-                    print(i)
             label_monto_total.configure(text=f"Monto Total : {MontoTotal}")
             label_monto_final.configure(text=f"Monto Final : {MontoTotal * 1.21}")
 
@@ -386,25 +438,40 @@ class FacturaNuevo(ctk.CTkToplevel):
         label_fecha_hora = ctk.CTkLabel(self, text=f"Fecha y Hora: {fecha_actual}", font=fuente_general)
         label_fecha_hora.place(x=30, y=260)
 
-        label_Detalles = ctk.CTkLabel(self, text="Nombre------- Cantidad ---------PrecioU --------------PrecioTot")
-        label_Detalles.place(x=10,y=290)
-        # Función para agregar el pedido y los detalles
+        columnas = ["Nombre", "Cantidad", "Stock","Precio U", "Precio Total"]
+        self.TV_Busqueda = ttk.Treeview(self, columns=columnas, height=6, show="headings")
+        self.TV_Busqueda.place(x=10, y=290)
+        for col in columnas:
+            self.TV_Busqueda.heading(col, text=col)
+            self.TV_Busqueda.column(col, width=80)
 
-        label_monto_total = ctk.CTkLabel(self,text="Monto Total : ")
-        label_monto_total.place(x=370,y=290)
-        label_monto_final = ctk.CTkLabel(self,text="Monto Final : ")
-        label_monto_final.place(x=370,y=340)
+        label_monto_total = ctk.CTkLabel(self,text="Monto Total : ", font=fuente_general)
+        label_monto_total.place(x=415,y=290)
+        label_monto_final = ctk.CTkLabel(self,text="Monto Final : ", font=fuente_general)
+        label_monto_final.place(x=415,y=340)
 
-        combo_forma_pago = ctk.CTkComboBox(self,values=["Efectivo","Cheque","Credito"])
-        combo_forma_pago.place(x=370,y=380)
+        combo_forma_pago = ctk.CTkComboBox(self,values=["Efectivo","Cheque","Credito"], font=fuente_general)
+        combo_forma_pago.place(x=415,y=380)
 
         def agregar_factura():
             if combo_pedidos.get() == "-" or combo_pedidos.get() == "":
                 messagebox.showwarning(title="Error",message="SELECCIONE UN PEDIDO") 
             elif messagebox.askyesno(title="Cambiando de Ventana",message="Esta seguro de que los datos son correctos?") :
-                
+                #TODO: ANTES DE AGREGAR UNA FACTURA INTENTAR RESTAR STOCK - CANTIDAD SI DA NEGATIVO MOSTRAR LA VENTANA DE HARDWARE PARA CAMBIARLO Y AGREGAR FUNCION DE ELIMINAR/EDITAR PA LOS QUE YA ESTAN ASDASDASDASFADSGMNSFKDL
                 baseDeDatos.crear_factura(label_nombre_resultado.cget("text").split(" - ")[0],label_nombre_resultado.cget("text").split(" - ")[1],label_fecha_hora.cget("text")
-                                          ,label_monto_final.cget("text").split(" : ")[1],label_monto_total.cget("text").split(" : ")[1],combo_forma_pago.get(),nuevo_id_factura)         
+                                          ,label_monto_final.cget("text").split(" : ")[1],label_monto_total.cget("text").split(" : ")[1],combo_forma_pago.get(),combo_pedidos.get().split(" - ")[0])
+                baseDeDatos.editar_pedido(id_pedido=combo_pedidos.get().split(" - ")[0],nueva_condicion="Facturado")
+                self.destroy()
+            else:
+                print("Canceled")
+
+        def agregar_presupuesto():
+            if combo_pedidos.get() == "-" or combo_pedidos.get() == "":
+                messagebox.showwarning(title="Error",message="SELECCIONE UN PEDIDO") 
+            elif messagebox.askyesno(title="Cambiando de Ventana",message="Esta seguro de que los datos son correctos?") :
+                #TODO: MOSTRAR ESTO EN ALGUN LADO? NI IDEA PARA QUE ES XD, CAPAZ UN PDF O ALGO ASI???
+                baseDeDatos.crear_presupuesto(fecha_actual,label_monto_final.cget("text").split(" : ")[1],label_monto_total.cget("text").split(" : ")[1],combo_forma_pago.get(),combo_pedidos.get().split(" - ")[0])
+                baseDeDatos.editar_pedido(id_pedido=combo_pedidos.get().split(" - ")[0],nueva_condicion="Presupuestado")
                 self.destroy()
             else:
                 print("Canceled")
@@ -417,6 +484,9 @@ class FacturaNuevo(ctk.CTkToplevel):
         # Botón para cancelar y cerrar la ventana
         boton_cancelar = ctk.CTkButton(self, text="Cancelar", font=fuente_general, command=self.destroy,fg_color="#c0392b")
         boton_cancelar.place(x=200, y=450)
+
+        boton_agregar = ctk.CTkButton(self, text="Presupuestar", font=fuente_general, command=agregar_presupuesto)
+        boton_agregar.place(x=380, y=450)
 
 class Ventas(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -453,6 +523,7 @@ class Ventas(ctk.CTkFrame):
         self.BTN_Factura.place(x=30, y=180)
 
         self.BTN_Factura = ctk.CTkButton(self, text="", font=Fuente_General, height=50, width=280)
+        #TODO: ESTE BOTON DEBERIA SER PARA LA PARTE 3 DE MOSTRAR LOS PAGOS O NSQ CREO, HAY ALGO MAS QUE FALTA CREO
         self.BTN_Factura.place(x=30, y=260)
 
         self.BTN_CancelarPedido = ctk.CTkButton(self, text="Cancelar Pedido", font=Fuente_General, height=50, width=280, fg_color="#c0392b", hover_color="#e74c3c",command=lambda : CancelarPedido(self,controller))
@@ -481,13 +552,3 @@ class Ventas(ctk.CTkFrame):
                     label.place(x=340, y=altura)  
                     j += 1
                 
-        
-
-        #------------------------------------Caja------------------------------------
-        self.LA_TituloCaja = ctk.CTkLabel(self, text='Caja diaria', font=Fuente_Titulos, text_color='#007090')
-        self.LA_TituloCaja.place(x=760, y=100)
-
-        self.LA_Caja = ctk.CTkLabel(self, text='$00000,00', font=Fuente_Caja)
-        self.LA_Caja.place(x=760, y=170)
-
-        #----------------------------------Tabla de pedidos-----------------------------------------

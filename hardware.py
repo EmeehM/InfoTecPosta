@@ -1,3 +1,4 @@
+import tkinter.messagebox
 import tkinter.ttk
 
 import customtkinter as ctk
@@ -64,8 +65,10 @@ class Hardware(ctk.CTkFrame):
             if(seleccion == "Agregar"):
                 self.Dialog = ctk.CTkInputDialog(text="Agregar Nuevo tipo:", title="Tipo de Hardware",)
                 Auxiliar=str(self.Dialog.get_input())
-                print(Auxiliar)
-                baseDeDatos.agregar_tipo(ultimosID().get("UltIdTipo"),Auxiliar)
+                if(Auxiliar != None and Auxiliar.strip() != "" and Auxiliar != "None"):
+                    baseDeDatos.agregar_tipo(ultimosID().get("UltIdTipo"),Auxiliar)
+                else:
+                    tkinter.messagebox.showerror(title="Error",message="ERROR, el input no puede estar vacio!")
                 TiposDeHard = baseDeDatos.obtener_tipos()
                 TiposDeHard.insert(0, "-")
                 TiposDeHard.append("Agregar")
@@ -74,7 +77,11 @@ class Hardware(ctk.CTkFrame):
         def SeleccionMarca(seleccion):
             if(seleccion == "Agregar"):
                 self.Dialog = ctk.CTkInputDialog(text="Agregar Nueva Marca:", title="Marcas")
-                baseDeDatos.agregar_marca(ultimosID().get("UltIdMarca"),self.Dialog.get_input())
+                Auxiliar=str(self.Dialog.get_input())
+                if(Auxiliar != None and Auxiliar.strip() != "" and Auxiliar != "None"):
+                    baseDeDatos.agregar_marca(ultimosID().get("UltIdMarca"),Auxiliar)
+                else:
+                    tkinter.messagebox.showerror(title="Error",message="ERROR, el input no puede estar vacio!")
                 MarcasDeHard = baseDeDatos.obtener_marca()
                 MarcasDeHard.insert(0, "-")
                 MarcasDeHard.append("Agregar")
@@ -134,9 +141,6 @@ class Hardware(ctk.CTkFrame):
             self.IdHardware.configure(text=f"ID-Hardware: {UltIdHard} ")
 
         def eliminar_marca(marca):
-            print(
-                marca
-            )
             baseDeDatos.eliminar_marca(marca)
             MarcasDeHard = baseDeDatos.obtener_marca()
             MarcasDeHard.insert(0, "-")

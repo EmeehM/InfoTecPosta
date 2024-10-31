@@ -27,7 +27,6 @@ def buscar_hardware(caracteristicas=None, tipo=None, id_hard=None):
 
     cursor.execute(query, params)
     resultados = cursor.fetchall()
-
     return resultados
 # Función para modificar un registro
 def modificar_hardware(id_hard, nuevas_caracteristicas=None, nuevo_precio=None, nuevas_unidades=None):
