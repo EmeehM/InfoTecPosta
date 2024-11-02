@@ -210,13 +210,17 @@ class PedidoDetalles(ctk.CTkToplevel):
         def Cerrar():
             if messagebox.askokcancel(title="Cerrar",message="Cerrar todo?") :
                 if datos != None and datos != [] and datos != "None":
-                    baseDeDatos.crear_pedido(id_cliente_seleccionado[0],id_cliente_seleccionado[1] , fecha_actual, "Registrado")
-                    i=0
-                    for items in ProductosAgregados:
-                        baseDeDatos.crear_detalle_pedido(ProductosAgregados[i][0],ProductosAgregados[i][1],ProductosAgregados[i][2],ProductosAgregados[i][3],
-                                                         ProductosAgregados[i ][4],ProductosAgregados[i][5],ProductosAgregados[i][6])
-                        i = i + 1
-                    PedidoNuevo.destroy(parent)
+                    if baseDeDatos.buscar_pedido(id_pedido=id_pedido) == None and ProductosAgregados[0]<6:
+                        baseDeDatos.crear_pedido(id_cliente_seleccionado[0],id_cliente_seleccionado[1] , fecha_actual, "Registrado")
+                        i=0
+                        for items in ProductosAgregados:
+                            baseDeDatos.crear_detalle_pedido(ProductosAgregados[i][0],ProductosAgregados[i][1],ProductosAgregados[i][2],ProductosAgregados[i][3],
+                                                            ProductosAgregados[i ][4],ProductosAgregados[i][5],ProductosAgregados[i][6])
+                            i = i + 1
+                        PedidoNuevo.destroy(parent)
+                    else:
+                        for items in ProductosAgregados:
+                            baseDeDatos.eliminar_detalle_pedido(ProductosAgregados[0])
                     self.destroy()
                 #else:
                     #messagebox.showerror(title="Agregar Productos",message="Añada por lo menos 1 producto al pedido!")
@@ -226,7 +230,37 @@ class PedidoDetalles(ctk.CTkToplevel):
             item_id = self.TV_Busqueda.focus()
             if item_id:
                 item_values = self.TV_Busqueda.item(item_id, "values")
-                id_detallePed = item_values[0]
+                i = 0
+                #TODO:Cambiar Tambien los precios xd
+                print(len(ProductosAgregados[0]))
+                if len(ProductosAgregados[0]) == 7:
+                    print("entro 1a")
+                    for items in ProductosAgregados:
+                        print("entro 1b")
+                        print(datos[i])
+                        if int(ProductosAgregados[i][1]) == int(item_values[0]) and int(datos[i][0]) == int(item_values[0]):
+                            print("entro 1c")
+                            if ProductosAgregados[i][4]>int(Cantidad.get):
+                                print("entro 1d")
+                                ProductosAgregados[i][4] = int(Cantidad.get)
+                                datos[i][3] = int(Cantidad.get)
+                                messagebox.showinfo(title="Edicion Realizada", message="Edicion Realizada Con exito!")
+                    i=i+1
+                elif len(ProductosAgregados[0]) == 8:
+                    for items in ProductosAgregados:
+                        if ProductosAgregados[i][2] == item_values[0] and datos[i][0] == item_values[0]:
+                            if ProductosAgregados[i][5]>int(Cantidad.get):
+                                ProductosAgregados[i][5] = int(Cantidad.get)
+                                datos[i][3] = int(Cantidad.get)
+                                messagebox.showinfo(title="Edicion Realizada", message="Edicion Realizada Con exito!")
+                    i=i+1
+                print(ProductosAgregados)
+                for items in self.TV_Busqueda.get_children():
+                    self.TV_Busqueda.delete(items)
+                for fila in datos:
+                    self.TV_Busqueda.insert("", "end", values=fila)
+                   
+
             
 
         Titulo = ctk.CTkLabel(self,text=f"Hardware al pedido: {id_pedido}",font=Fuente_Titulos)
