@@ -249,10 +249,28 @@ def buscar_pedido(id_pedido):
     pedido = cursor.fetchone()
     return pedido
 
-def editar_pedido(id_pedido, nueva_fecha, nueva_condicion):
-    cursor.execute('''UPDATE Pedidos SET Fecha = ?, Condicion = ? 
-                      WHERE ID_Pedidos = ?''', (nueva_fecha, nueva_condicion, id_pedido))
-    conn.commit()
+def editar_pedido(id_pedido, nueva_fecha=None, nueva_condicion=None):
+    # Lista para almacenar partes de la consulta y valores
+    columnas = []
+    valores = []
+
+    # Agregar columnas y valores solo si no son None
+    if nueva_fecha is not None:
+        columnas.append("Fecha = ?")
+        valores.append(nueva_fecha)
+
+    if nueva_condicion is not None:
+        columnas.append("Condicion = ?")
+        valores.append(nueva_condicion)
+
+    # Agregar el ID del pedido al final de los valores
+    valores.append(id_pedido)
+
+    # Solo ejecutar la consulta si hay columnas para actualizar
+    if columnas:
+        query = f"UPDATE Pedidos SET {', '.join(columnas)} WHERE ID_Pedidos = ?"
+        cursor.execute(query, valores)
+        conn.commit()
 
 def buscar_detalle_pedido(id_pedido):
     cursor.execute('''SELECT * FROM Detalle_Pedidos WHERE ID_Pedidos = ?''', (id_pedido,))
@@ -522,3 +540,129 @@ def crear_presupuesto(fecha, monto_final, monto_total, forma_pago, cantidad_cuot
                       VALUES (?, ?, ?, ?, ?, ?)''', 
                    (fecha, monto_final, monto_total, forma_pago, cantidad_cuotas, id_pedido))
     conn.commit()
+
+#------------------------ID FACTURA VENTA---------------------------------------------------------------------------
+# Función para insertar un nuevo registro
+def crear_factura_venta(nro_factura, deuda):
+    cursor.execute('''
+        INSERT INTO Facturas_Venta (Nro_Factura, Deuda) VALUES (?, ?)
+    ''', (nro_factura, deuda))
+    conn.commit()
+    print("Registro creado exitosamente.")
+
+# Función para editar un registro existente
+def editar_factura_venta(id_fv, nuevo_nro_factura=None, nueva_deuda=None):
+    columnas = []
+    valores = []
+
+    if nuevo_nro_factura is not None:
+        columnas.append("Nro_Factura = ?")
+        valores.append(nuevo_nro_factura)
+    
+    if nueva_deuda is not None:
+        columnas.append("Deuda = ?")
+        valores.append(nueva_deuda)
+    
+    valores.append(id_fv)
+
+    if columnas:
+        query = f"UPDATE Facturas_Venta SET {', '.join(columnas)} WHERE ID_FV = ?"
+        cursor.execute(query, valores)
+        conn.commit()
+        print("Registro actualizado exitosamente.")
+
+# Función para eliminar un registro
+def eliminar_factura_venta(id_fv):
+    cursor.execute('DELETE FROM Facturas_Venta WHERE ID_FV = ?', (id_fv,))
+    conn.commit()
+    print("Registro eliminado exitosamente.")
+
+# Función para buscar un registro por ID_FV
+def buscar_factura_venta(id_fv):
+    cursor.execute('SELECT * FROM Facturas_Venta WHERE ID_FV = ?', (id_fv,))
+    resultado = cursor.fetchone()
+    if resultado:
+        print("Registro encontrado:", resultado)
+    else:
+        print("No se encontró ningún registro con ese ID.")
+        
+def buscar_todas_facturas_venta():
+    query = 'SELECT * FROM Facturas_Venta'
+    cursor.execute(query)
+    resultados = cursor.fetchall()
+    if resultados:
+        print("Todas las facturas de venta encontradas:")
+        for factura in resultados:
+            print(factura)
+    else:
+        print("No se encontraron facturas de venta.")
+
+
+#---------------------------------------Pagos-----------------------------------------------
+# Función para crear un registro en la tabla Pagos
+def crear_pago(id_fv, monto, fecha, forma_pago):
+    query = '''
+        INSERT INTO Pagos (ID_FV, Monto, Fecha, FormaPago)
+        VALUES (?, ?, ?, ?)
+    '''
+    cursor.execute(query, (id_fv, monto, fecha, forma_pago))
+    conn.commit()
+    print("Pago creado exitosamente.")
+
+# Función para editar un registro en la tabla Pagos
+def editar_pago(id_pagos, nuevo_id_fv=None, nuevo_monto=None, nueva_fecha=None, nueva_forma_pago=None):
+    columnas = []
+    valores = []
+    
+    if nuevo_id_fv is not None:
+        columnas.append("ID_FV = ?")
+        valores.append(nuevo_id_fv)
+    
+    if nuevo_monto is not None:
+        columnas.append("Monto = ?")
+        valores.append(nuevo_monto)
+    
+    if nueva_fecha is not None:
+        columnas.append("Fecha = ?")
+        valores.append(nueva_fecha)
+    
+    if nueva_forma_pago is not None:
+        columnas.append("FormaPago = ?")
+        valores.append(nueva_forma_pago)
+    
+    valores.append(id_pagos)
+
+    if columnas:
+        query = f"UPDATE Pagos SET {', '.join(columnas)} WHERE ID_Pagos = ?"
+        cursor.execute(query, valores)
+        conn.commit()
+        print("Pago actualizado exitosamente.")
+
+# Función para eliminar un registro en la tabla Pagos
+def eliminar_pago(id_pagos):
+    query = 'DELETE FROM Pagos WHERE ID_Pagos = ?'
+    cursor.execute(query, (id_pagos,))
+    conn.commit()
+    print("Pago eliminado exitosamente.")
+
+# Función para buscar un registro en la tabla Pagos por ID_Pagos
+def buscar_pago_por_id(id_pagos):
+    query = 'SELECT * FROM Pagos WHERE ID_Pagos = ?'
+    cursor.execute(query, (id_pagos,))
+    resultado = cursor.fetchone()
+    if resultado:
+        print("Pago encontrado:", resultado)
+    else:
+        print("No se encontró ningún pago con ese ID.")
+
+# Función para buscar todos los registros en la tabla Pagos
+def buscar_todos_pagos():
+    query = 'SELECT * FROM Pagos'
+    cursor.execute(query)
+    resultados = cursor.fetchall()
+    if resultados:
+        print("Todos los pagos encontrados:")
+        for pago in resultados:
+            print(pago)
+    else:
+        print("No se encontraron pagos.")

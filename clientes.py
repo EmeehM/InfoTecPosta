@@ -2,11 +2,17 @@ import tkinter .ttk
 
 import customtkinter as ctk
 
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from datetime import datetime
 import baseDeDatos
 import comprobaciones
 import hardware
 import proveedores
 import ventas
+import os
 
 class Clientes(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -87,6 +93,54 @@ class Clientes(ctk.CTkFrame):
             Busqueda("", "Id")
             self.IdCliente.configure(text=f"ID-Cliente: {ultimoID()}")
 
+        def crear_pdf():
+            print(baseDeDatos.buscar_todos_clientes())
+            # Crear el documento PDF
+            pdf_file = f'clientes_infotech{datetime.now().strftime("%Y-%m-d")}.pdf'
+            document = SimpleDocTemplate(pdf_file, pagesize=letter)
+            
+            # Estilos y elementos del documento
+            styles = getSampleStyleSheet()
+            elementos = []
+            
+            # Título
+            titulo = Paragraph("Infotech Clientes", styles['Title'])
+            elementos.append(titulo)
+            
+            # Fecha actual a la derecha
+            fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            fecha = Paragraph(f"<para align='right'>{fecha_actual}</para>", styles['Normal'])
+            elementos.append(fecha)
+            
+            # Espacio entre el título/fecha y la tabla
+            elementos.append(Paragraph("<br/><br/>", styles['Normal']))
+            
+            # Obtener los datos de clientes
+            datos_clientes = baseDeDatos.buscar_clientes()
+            
+            # Encabezado de la tabla
+            encabezado = ['ID', 'DNI', 'CUIT', 'Nombre', 'Direccion', 'Telefono', 'Correo']
+            datos = [encabezado] + datos_clientes
+            
+            # Crear la tabla
+            tabla = Table(datos)
+            # Estilos de la tabla
+            estilo_tabla = TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Fondo de la fila de encabezado
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Color del texto de encabezado
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Alinear texto
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Bordes de la tabla
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),  # Fondo de las filas de datos
+            ])
+            
+            tabla.setStyle(estilo_tabla)
+            # Agregar tabla a los elementos del documento
+            elementos.append(tabla)
+            # Construir el PDF
+            document.build(elementos)
+            os.startfile(pdf_file)
+            print(f"PDF creado exitosamente: {pdf_file}")
+
         # --------------------------Titulo------------------------------------------
         self.titulo = ctk.CTkLabel(self, text="Clientes", text_color="#007090", font=Fuente_Titulos)
         self.titulo.grid(row=0, column=0, padx=(5, 360))
@@ -164,7 +218,7 @@ class Clientes(ctk.CTkFrame):
         for col in columnas:
             self.TV_Busqueda.heading(col, text=col)
             self.TV_Busqueda.column(col, width=58)
-
+            
         # ---------------------------------Botones de Abajo-------------------------------------------------------------
         self.BTN_Carga = ctk.CTkButton(self, text="Cargar",
                                        command=lambda: cargar_cliente(self.IN_DNI.get(),
@@ -176,6 +230,9 @@ class Clientes(ctk.CTkFrame):
                                                                         self.CHK_Socio.get(),
                                                                         self.CHK_SocioGerente.get()))
         self.BTN_Carga.grid(row=9, column=0, padx=(10, 170), sticky="we", pady=(10,0))
+
+        self.BTN_ImprimirTodos = ctk.CTkButton(self,text="Reporte",font=Fuente_General,command=lambda: crear_pdf())
+        self.BTN_ImprimirTodos.place(x=520,y=460)
 
         self.BTN_Modificar = ctk.CTkButton(self, text="Modificar", font=Fuente_General,
                                            command=lambda: modificar_seleccionado())
