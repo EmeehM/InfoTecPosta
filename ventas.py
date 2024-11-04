@@ -3,17 +3,18 @@ import tkinter.messagebox as messagebox
 from typing import Tuple
 import customtkinter as ctk
 from tkinter import *
-from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import inch
-from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
 import baseDeDatos
 import clientes
 import comprobaciones
 import proveedores
 import hardware
 import datetime
+from datetime import datetime
+import os
 
 class BuscarPedido(ctk.CTkToplevel):
     def __init__(self, parent,controller):
@@ -41,7 +42,9 @@ class BuscarPedido(ctk.CTkToplevel):
             seleccion = combo_pedidos.get().split(" - ")
             datosPedido = baseDeDatos.buscar_pedido(seleccion[0])
             label_nombre_resultado.configure(text=f" {datosPedido[1]} - {datosPedido[2]}")
+            print(datosPedido[0])
             ProductosAgregados = baseDeDatos.buscar_detalle_pedido(datosPedido[0])
+            print(ProductosAgregados)
             label_estado_pedido.configure(text=f"Estado de Pedido : {datosPedido[4]}")
             label_fecha_hora.configure(text=f"Fecha y Hora:{datosPedido[3]} ")
             i=0
@@ -167,22 +170,21 @@ class PedidoDetalles(ctk.CTkToplevel):
             return lista_productos
 
         def agregar_producto():
-            i=int(len(ProductosAgregados))
             Hardware = baseDeDatos.buscar_hardware(id_hard=IDHard.get().split(" - ")[0])
             i=0
             Repeated = False
             for items in ProductosAgregados:
-                if ProductosAgregados[i][1] == IDHard.get().split(" - ")[0]:
+                if ProductosAgregados[i][0] == IDHard.get().split(" - ")[0]:
                     Repeated = True
             if not Repeated:
-                if int(Hardware[0][3]) >= int(Cantidad.get()):
-                    Stock.configure(text=f"Stock disponible : {Hardware[0][3]}")
-                    PrecioUnitario.configure(text=f"Precio Unitario : {Hardware[0][2]}")
-                    PrecioTotal.configure(text=f"Precio Total : {Hardware[0][2] * int(Cantidad.get())}")
+                if int(Hardware[0][5]) >= int(Cantidad.get()):
+                    Stock.configure(text=f"Stock disponible : {Hardware[0][5]}")
+                    PrecioUnitario.configure(text=f"Precio Unitario : {Hardware[0][4]}")
+                    PrecioTotal.configure(text=f"Precio Total : {Hardware[0][4] * int(Cantidad.get())}")
                     ProductosAgregados.append([id_pedido,IDHard.get().split(" - ")[0],IDHard.get().split(" - ")[1],Cantidad.get(),Stock.cget("text").split(" : ")[1]
                                                     ,PrecioUnitario.cget("text").split(" : ")[1],PrecioTotal.cget("text").split(" : ")[1]])
                     messagebox.showinfo(title="Producto Cargado!",message="Producto cargado con exito!")
-                    datos.append((Hardware[0][0],Hardware[0][1],Hardware[0][3],Cantidad.get()))
+                    datos.append((Hardware[0][0],Hardware[0][3],Hardware[0][5],Cantidad.get()))
                     for items in self.TV_Busqueda.get_children():
                         self.TV_Busqueda.delete(items)
                     for fila in datos:
@@ -191,6 +193,7 @@ class PedidoDetalles(ctk.CTkToplevel):
                     messagebox.showerror(title="Stock Insuficiente",message="No tiene suficiente stock de este producto!")
             else:
                 messagebox.showerror(title="Producto Repetido", message="Producto ya agregado con anterioridad!")
+            print(ProductosAgregados)
                 
         def manejar_seleccion_Hard(event):
             seleccion = []
@@ -205,28 +208,24 @@ class PedidoDetalles(ctk.CTkToplevel):
                 IDHard.set("-")
             else:
                 Hardware = baseDeDatos.buscar_hardware(id_hard=seleccion[0])
-                Componente.configure(text=f"Nombre : {Hardware[0][1]}")
-                Stock.configure(text=f"Stock disponible : {Hardware[0][3]}")
-                PrecioUnitario.configure(text=f"Precio Unitario : {Hardware[0][2]}")
-                PrecioTotal.configure(text=f"Precio Total : {Hardware[0][2] * int(Cantidad.get())}")
+                Componente.configure(text=f"Nombre : {Hardware[0][3]}")
+                Stock.configure(text=f"Stock disponible : {Hardware[0][5]}")
+                PrecioUnitario.configure(text=f"Precio Unitario : {Hardware[0][4]}")
+                PrecioTotal.configure(text=f"Precio Total : {Hardware[0][4] * int(Cantidad.get())}")
 
         def Cerrar():
             if messagebox.askokcancel(title="Cerrar",message="Cerrar todo?") :
                 if datos != None and datos != [] and datos != "None":
-                    if baseDeDatos.buscar_pedido(id_pedido=id_pedido) == None and ProductosAgregados[0]<6:
-                        baseDeDatos.crear_pedido(id_cliente_seleccionado[0],id_cliente_seleccionado[1] , fecha_actual, "Registrado")
-                        i=0
-                        for items in ProductosAgregados:
-                            baseDeDatos.crear_detalle_pedido(ProductosAgregados[i][0],ProductosAgregados[i][1],ProductosAgregados[i][2],ProductosAgregados[i][3],
+                    baseDeDatos.crear_pedido(id_cliente_seleccionado[0],id_cliente_seleccionado[1] , fecha_actual, "Registrado")
+                    i=0
+                    for items in ProductosAgregados:
+                        baseDeDatos.crear_detalle_pedido(ProductosAgregados[i][0],ProductosAgregados[i][1],ProductosAgregados[i][2],ProductosAgregados[i][3],
                                                             ProductosAgregados[i ][4],ProductosAgregados[i][5],ProductosAgregados[i][6])
-                            i = i + 1
+                        i = i + 1
                         PedidoNuevo.destroy(parent)
-                    else:
-                        for items in ProductosAgregados:
-                            baseDeDatos.eliminar_detalle_pedido(ProductosAgregados[0])
                     self.destroy()
-                #else:
-                    #messagebox.showerror(title="Agregar Productos",message="Añada por lo menos 1 producto al pedido!")
+                else:
+                    messagebox.showerror(title="Agregar Productos",message="Añada por lo menos 1 producto al pedido!")
                 
         Titulo = ctk.CTkLabel(self,text=f"Hardware al pedido: {id_pedido}",font=Fuente_Titulos)
         Titulo.place(x=10, y=8)
@@ -262,7 +261,7 @@ class PedidoDetalles(ctk.CTkToplevel):
             self.TV_Busqueda.column(col, width=75)
 
         CerrarBTN = ctk.CTkButton(self,text="Finalizar",command=Cerrar,font=fuente_general,fg_color="#c0392b", hover_color="#e74c3c")
-        CerrarBTN.place(x=400,y=450)
+        CerrarBTN.place(x=10,y=450)
 
 class PedidoNuevo(ctk.CTkToplevel):
     def __init__(self, parent, controller):
@@ -325,7 +324,7 @@ class PedidoNuevo(ctk.CTkToplevel):
         label_nombre_resultado.place(x=210,y=200)
 
         # Mostrar la fecha y hora actual
-        fecha_actual = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         label_fecha_hora = ctk.CTkLabel(self, text=f"Fecha y Hora: {fecha_actual}", font=fuente_general)
         label_fecha_hora.place(x=30, y=260)
 
@@ -363,6 +362,7 @@ class FacturaNuevo(ctk.CTkToplevel):
 
         datos = []
         ProductosAgregados=[]
+        lista_clientes = []
         fuente_general = ctk.CTkFont(family="Lucida Grande", size=20)
         Fuente_Titulos = ctk.CTkFont(family="Segoe UI", size=36, underline=True)
 
@@ -377,7 +377,11 @@ class FacturaNuevo(ctk.CTkToplevel):
 
         def obtener_pedidos():
             clientes = baseDeDatos.buscar_todos_pedidos() 
-            lista_clientes = [f"{cliente[0]} - {cliente[2]}" for cliente in clientes]
+            i=0
+            for cliente in clientes:
+                if clientes[i][4] != "Cancelado":  
+                    lista_clientes.append(f"{cliente[0]} - {cliente[2]}")
+                i=i+1
             lista_clientes.insert(0,"-") 
             return lista_clientes
 
@@ -471,7 +475,7 @@ class FacturaNuevo(ctk.CTkToplevel):
         label_nombre_resultado.place(x=210,y=200)
 
         # Mostrar la fecha y hora actual
-        fecha_actual = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         label_fecha_hora = ctk.CTkLabel(self, text=f"Fecha y Hora: {fecha_actual}", font=fuente_general)
         label_fecha_hora.place(x=30, y=260)
 
@@ -517,9 +521,34 @@ class Pago(ctk.CTkToplevel):
         ValoresComboFact = []
         #----------------------------Funciones---------------------------------------------------
         def manejar_seleccion(seleccion):
-            print("b")
+            if seleccion != "-":
+                FactVenSelec = baseDeDatos.buscar_factura_venta(id_fv=seleccion.split(" - ")[0])
+                self.LB_Deuda.configure(text=f"Deuda: {FactVenSelec[2]}")
+
         def Pagar():
-            print("a")
+            if self.EN_Monto.get() == None or self.EN_Monto.get() == "None" or self.EN_Monto.get() == "" or  not self.EN_Monto.get().isdigit():
+                messagebox.showerror(title="Monto Incorrecto",message="Ingrese un monto a pagar!")
+            elif self.CB_IDFact.get() == "-":
+                messagebox.showerror(title="Falta seleccionar factura",message="Seleccione una factura")
+            else:
+                baseDeDatos.crear_pago(self.CB_IDFact.get().split(" - ")[0],self.EN_Monto.get(),datetime.now(),self.CB_Forma.get())
+                FacturaAux = baseDeDatos.buscar_factura_venta(self.CB_IDFact.get().split(" - ")[0])
+                if FacturaAux[2]>int(self.EN_Monto.get()):
+                    baseDeDatos.editar_factura_venta(self.CB_IDFact.get().split(" - ")[0],nueva_deuda=(FacturaAux[2] - int(self.EN_Monto.get())))
+                    messagebox.showinfo(title="Pago Realizado",message="Pago registrado exitosamente!")
+                else:
+                    baseDeDatos.editar_factura_venta(self.CB_IDFact.get().split(" - ")[0],nueva_deuda= 0)
+                    messagebox.showinfo(title="Deuda Saldada", message="La deuda fue saldada en su totalidad, entregar vuelto!")
+            Facturas = baseDeDatos.buscar_todas_facturas_venta()
+            i=0
+            if Facturas:
+                for items in Facturas:
+                    if Facturas[i][2]>0:
+                        ValoresComboFact.append(f"{Facturas[i][0]} - Factura N°{Facturas[i][1]}")
+                    i=i+1
+            self.CB_IDFact.configure(values=ValoresComboFact)
+                    
+                
 
 
         #----------------------------------------------------------------------------------------
@@ -532,12 +561,10 @@ class Pago(ctk.CTkToplevel):
 
         Facturas = baseDeDatos.buscar_todas_facturas_venta()
         i=0
-        #TODO: VER LA CARGA QUE NO FUNCIONA XD
         if Facturas:
-            print(Facturas)
             for items in Facturas:
-                ValoresComboFact.apend(Facturas[i][0])
-                ValoresComboFact.apend(Facturas[i][1])
+                if Facturas[i][2]>0:
+                    ValoresComboFact.append(f"{Facturas[i][0]} - Factura N°{Facturas[i][1]}")
                 i=i+1
         
         ValoresComboFact.insert(0,"-")
@@ -575,52 +602,53 @@ class Ventas(ctk.CTkFrame):
         self.titulo = ctk.CTkLabel(self, text="Ventas", text_color="#007090", font=Fuente_Titulos)
         self.titulo.grid(row=0, column=0, padx=(10, 360), pady=(0, 20))
         #--------------------------Funciones---------------------------------------
-        def crear_pdf_pagos():
-            # Nombre del archivo PDF
-            pdf_filename = f"Pagos {datetime.now.strftime("%d/%m/%Y")}.pdf"
-            pdf = SimpleDocTemplate(pdf_filename, pagesize=letter)
+        def crear_pdf():
+            print(baseDeDatos.buscar_todos_clientes())
+            # Crear el documento PDF
+            pdf_file = f'Pagos_infotech{datetime.now().strftime("%Y-%m-d")}.pdf'
+            document = SimpleDocTemplate(pdf_file, pagesize=letter)
+            
+            # Estilos y elementos del documento
+            styles = getSampleStyleSheet()
             elementos = []
-
+            
             # Título
-            titulo = "Infotech Pagos"
-            fecha_actual = datetime.now().strftime("%d/%m/%Y")
+            titulo = Paragraph("Infotech Pagos", styles['Title'])
+            elementos.append(titulo)
             
-            # Crear el canvas
-            c = canvas.Canvas(pdf_filename)
-            c.setFont("Helvetica-Bold", 24)
-            c.drawString(72, 750, titulo)
-            c.setFont("Helvetica", 12)
-            c.drawString(450, 750, f"Fecha: {fecha_actual}")
+            # Fecha actual a la derecha
+            fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            fecha = Paragraph(f"<para align='right'>{fecha_actual}</para>", styles['Normal'])
+            elementos.append(fecha)
             
-            # Obtener datos de Pagos
-            pagos = baseDeDatos.buscar_todos_pagos()  # Asegúrate de que esta función regrese una lista de tuplas
-            encabezados = ["ID_Pagos", "ID_FV", "Monto", "Fecha", "FormaPago"]
-
+            # Espacio entre el título/fecha y la tabla
+            elementos.append(Paragraph("<br/><br/>", styles['Normal']))
+            
+            # Obtener los datos de clientes
+            datos_clientes = baseDeDatos.buscar_todos_pagos()
+            
+            # Encabezado de la tabla
+            encabezado = ['ID_Pagos','ID_FV','Monto','Fecha','Forma Pago']
+            datos = [encabezado] + datos_clientes
+            
             # Crear la tabla
-            datos_tabla = [encabezados] + [list(pago) for pago in pagos]  # Convertir tuplas a listas para la tabla
-            tabla = Table(datos_tabla)
-            
+            tabla = Table(datos)
             # Estilos de la tabla
-            estilo = TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            estilo_tabla = TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Fondo de la fila de encabezado
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Color del texto de encabezado
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Alinear texto
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Bordes de la tabla
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),  # Fondo de las filas de datos
             ])
             
-            tabla.setStyle(estilo)
+            tabla.setStyle(estilo_tabla)
+            # Agregar tabla a los elementos del documento
             elementos.append(tabla)
-
-            # Finalizar el PDF
-            pdf.build(elementos)
-            
-            # Abrir el PDF después de crearlo
-            c.showPage()
-            c.save()
-            print("PDF de pagos creado exitosamente.")
+            # Construir el PDF
+            document.build(elementos)
+            os.startfile(pdf_file)
+            print(f"PDF creado exitosamente: {pdf_file}")
 
         #--------------------Botones arriba a la derecha---------------------------
         self.controller = controller
@@ -640,7 +668,7 @@ class Ventas(ctk.CTkFrame):
         self.BTN_Factura = ctk.CTkButton(self, text="Nueva Factura", font=Fuente_General, height=50, width=280,command=lambda: FacturaNuevo(self,controller))
         self.BTN_Factura.place(x=30, y=180)
 
-        self.BTN_Factura = ctk.CTkButton(self, text="Descargar Pagos", font=Fuente_General, height=50, width=280, command= lambda: crear_pdf_pagos())
+        self.BTN_Factura = ctk.CTkButton(self, text="Descargar Pagos", font=Fuente_General, height=50, width=280, command= lambda: crear_pdf())
         #TODO: ESTE BOTON DEBERIA SER PARA LA PARTE 3 DE MOSTRAR LOS PAGOS O NSQ CREO, HAY ALGO MAS QUE FALTA CREO
         self.BTN_Factura.place(x=30, y=260)
 

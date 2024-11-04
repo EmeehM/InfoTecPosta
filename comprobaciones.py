@@ -50,7 +50,7 @@ def Comprobacion_Clientes(DNI,CUIT,Nombre,Dir,Tel,Correo):
             if(CUIT>10000000000 and CUIT<99999999999):
                 if(len(Nombre)<40 and Nombre !=None):
                     if(len(Dir)<50 and Dir != None):
-                        if(Tel>1000000000 and Tel<9999999999):
+                        if(Tel>1000000 and Tel<9999999):
                             if re.match(patron,str(Correo)):
                                 return True
                             else:

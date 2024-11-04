@@ -5,6 +5,7 @@ import clientes
 import comprobaciones
 import hardware
 import ventas
+import tkinter.messagebox as messagebox
 
 class Proveedores(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -25,6 +26,7 @@ class Proveedores(ctk.CTkFrame):
         def cargar_proveedor(CUIT, Nombre, Dir, Tel, Correo, Categoria):
             if comprobaciones.Comprobacion_Proveedores(CUIT, Nombre, Dir, Tel, Correo,Categoria):
                 baseDeDatos.agregar_proveedor(ultimoID(), CUIT, Nombre, Dir, Tel, Correo, Categoria)
+                messagebox.showinfo(title="Proveedor cargado",message="Proveedor cargado con exito!")
                 self.IdProveedor.configure(text=f"ID-Proveedor: {ultimoID()}")
             Busqueda("", "Id")
 
@@ -55,6 +57,7 @@ class Proveedores(ctk.CTkFrame):
                     self.IN_Mail.get(),
                     self.IN_Categoria.get()
                 )
+                messagebox.showinfo(title="Proveedor Editado",message="Proveedor editado con exito!")
                 Busqueda("", "Id")
 
         def eliminar_seleccionado():

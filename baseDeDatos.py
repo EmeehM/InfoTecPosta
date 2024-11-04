@@ -10,7 +10,7 @@ cursor = conn.cursor()
 #-------------------------------------------BUSQUEDA--------------------------------------------------------------------
 # Función para buscar registros
 def buscar_hardware(caracteristicas=None, tipo=None, id_hard=None):
-    query = "SELECT * FROM HardwareView WHERE 1=1"
+    query = "SELECT * FROM Hardware WHERE 1=1"
     params = []
 
     if caracteristicas:
@@ -69,7 +69,7 @@ def modificar_hardware(id_hard, nuevas_caracteristicas=None, nuevo_precio=None, 
 
 def buscar_clientes(id = None, Nombre = None,DNI = None , Socio = None):
     if Socio:
-        cursor.execute("SELECT * FROM ClientesSocios")
+        cursor.execute("SELECT * FROM Socios")
         resultados = cursor.fetchall()
     else:
         query = "SELECT * FROM Clientes WHERE 1=1"
@@ -449,7 +449,7 @@ def buscar_todos_pedidos():
     return pedido
 
 def buscar_todos_clientes():
-    cursor.execute("SELECT * FROM ClientesSocios")
+    cursor.execute("SELECT * FROM Clientes")
     resultados = cursor.fetchall()
     return resultados
 def buscar_todos_hardware():
@@ -461,8 +461,8 @@ def buscar_todos_hardware():
 def agregar_hardware(IdHard,caracteristicas, precio_unitario, unidades_disponibles, tipo_hardware_descripcion,
                      marca_descripcion):
     # Insertar en la tabla Hardware
-    id_tipohard = tipo_hardware_descripcion[:4]
-    id_marca = marca_descripcion[:4]
+    id_tipohard = tipo_hardware_descripcion.split(" - ")[0]
+    id_marca = marca_descripcion.split(" - ")[0]
     cursor.execute(
         """INSERT INTO Hardware (ID_Hard,ID_Tipohard, ID_Marca, Caracteristicas, Precio_Unitario, Unidades_Disponibles)
            VALUES (?, ?, ?, ?, ?, ?)""",
@@ -496,7 +496,7 @@ def agregar_cliente(id,DNI,CUIT,Nombre,Dir,Tel,Correo,Socio,Gerente):
             conn.commit()
     except sqlite3.IntegrityError as er:
         tkinter.messagebox.showerror(title="Error en el ingreso de datos",
-                                     message= f"ERROR DE INTEGRIDAD DEDATOS,REVISAR SI LOS DATOS SON UNICOS, {er.sqlite_errorname}")
+                                     message= f"ERROR DE INTEGRIDAD DE DATOS,REVISAR SI LOS DATOS SON UNICOS, {er.sqlite_errorname}")
 
 def agregar_proveedor(id_proveedor, CUIT, Nombre, Dir, Tel, Correo, Categoria):
 
@@ -582,7 +582,7 @@ def buscar_factura_venta(id_fv):
     cursor.execute('SELECT * FROM Facturas_Venta WHERE ID_FV = ?', (id_fv,))
     resultado = cursor.fetchone()
     if resultado:
-        print("Registro encontrado:", resultado)
+        return resultado
     else:
         print("No se encontró ningún registro con ese ID.")
         
@@ -591,11 +591,10 @@ def buscar_todas_facturas_venta():
     cursor.execute(query)
     resultados = cursor.fetchall()
     if resultados:
-        print("Todas las facturas de venta encontradas:")
-        for factura in resultados:
-            print(factura)
+        return resultados
     else:
         print("No se encontraron facturas de venta.")
+    
 
 
 #---------------------------------------Pagos-----------------------------------------------
@@ -661,8 +660,6 @@ def buscar_todos_pagos():
     cursor.execute(query)
     resultados = cursor.fetchall()
     if resultados:
-        print("Todos los pagos encontrados:")
-        for pago in resultados:
-            print(pago)
+        return resultados
     else:
         print("No se encontraron pagos.")

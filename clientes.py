@@ -1,5 +1,5 @@
 import tkinter .ttk
-
+from tkinter import messagebox
 import customtkinter as ctk
 
 from reportlab.lib.pagesizes import letter
@@ -34,6 +34,7 @@ class Clientes(ctk.CTkFrame):
             if comprobaciones.Comprobacion_Clientes(DNI, CUIT, Nombre, Dir, Tel, Correo):
                 baseDeDatos.agregar_cliente(ultimoID(), DNI, CUIT, Nombre, Dir, Tel, Correo,
                                                 Socio, Gerente)
+                messagebox.showinfo(title="Cliente cargado",message="Cliente cargado con exito!")
                 self.IdCliente.configure(text=f"ID-Cliente:{ultimoID()}")
             Busqueda("", "Id")
 
@@ -75,6 +76,7 @@ class Clientes(ctk.CTkFrame):
                     self.CHK_Socio.get(),
                     self.CHK_SocioGerente.get()
                 )
+                messagebox.showinfo(title="Cliente Modificado",message="Cliente modificado con exito!")
                 Busqueda("", "Id")
 
         def eliminar_seleccionado():

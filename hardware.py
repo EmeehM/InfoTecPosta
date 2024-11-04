@@ -1,6 +1,6 @@
 import tkinter.messagebox
 import tkinter.ttk
-
+from tkinter import messagebox
 import customtkinter as ctk
 from tkinter import *
 
@@ -42,7 +42,6 @@ class Hardware(ctk.CTkFrame):
                 "idHard" : UltIdHard
             }
 
-
         #CARGA MARCAS DE HARDWARE
         MarcasDeHard = baseDeDatos.obtener_marca()
         MarcasDeHard.insert(0, "-")
@@ -58,6 +57,7 @@ class Hardware(ctk.CTkFrame):
                 baseDeDatos.agregar_hardware(ultimosID().get("idHard"),self.IN_Nombre.get(), self.IN_Precio.get(),
                                              self.IN_Unidades.get(), self.CB_TipoHard.get(),
                                              self.CB_MarcaHard.get())
+                messagebox.showinfo(title="Hardware Agregado",message="Hardware agregado con exito!")
                 self.IdHardware.configure(text=f"ID-Hardware: {ultimosID().get("idHard")} ")
 
 
@@ -118,7 +118,9 @@ class Hardware(ctk.CTkFrame):
                     self.IN_Precio.get(),
                     self.IN_Unidades.get()
                 )
+                messagebox.showinfo(title="Hardware Modificado",message="Hardware modificado con exito!")
                 Busqueda("","Id")
+        
         def eliminar_seleccionado():
             # Obtener el ID del elemento seleccionado
             item_id = self.TV_Busqueda.focus()
@@ -214,7 +216,7 @@ class Hardware(ctk.CTkFrame):
         self.BT_Busqueda = ctk.CTkButton(self, width=100, text="Buscar", font=Fuente_General, command=lambda: Busqueda(self.IN_Busqueda.get(),self.CB_Busqueda.get()))
         self.BT_Busqueda.place(x=870, y=100)
 
-        columnas = ["ID", "Caracteristicas", "Precio Unitario", "Unidades Disponibles", "Tipo", "Marca"]
+        columnas = ["ID", "Tipo", "Marca", "Nombre", "Precio", "Stock"]
         self.TV_Busqueda = tkinter.ttk.Treeview(self,columns=columnas, height=13, show="headings")
         self.TV_Busqueda.place(x=450, y=150)
         for col in columnas:
