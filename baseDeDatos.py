@@ -310,13 +310,13 @@ def eliminar_hardware(id_hard):
     conn.commit()
 #Función para eliminar una marca
 def eliminar_marca(id_marca):
-    id_marca = int(id_marca[:4])
+    id_marca = int(id_marca.split(". ")[1])
     cursor.execute("DELETE FROM Marca WHERE ID_Marca = ?", (id_marca,))
     cursor.execute("DELETE FROM Hardware WHERE ID_Marca = ?", (id_marca,))
     conn.commit()
 #Función para eliminar un tipo
 def eliminar_tipo(id_tipo):
-    id_tipo = int(id_tipo[:4])
+    id_tipo = int(id_tipo.split(". ")[1])
     print(id_tipo)
     cursor.execute("DELETE FROM TipoHard WHERE Id_Tipohard = ?", (id_tipo,))
     cursor.execute("DELETE FROM Hardware WHERE ID_Tipohard = ?", (id_tipo,))
@@ -461,8 +461,8 @@ def buscar_todos_hardware():
 def agregar_hardware(IdHard,caracteristicas, precio_unitario, unidades_disponibles, tipo_hardware_descripcion,
                      marca_descripcion):
     # Insertar en la tabla Hardware
-    id_tipohard = tipo_hardware_descripcion.split(" - ")[0]
-    id_marca = marca_descripcion.split(" - ")[0]
+    id_tipohard = tipo_hardware_descripcion.split(". ")[1]
+    id_marca = marca_descripcion.split(". ")[1]
     cursor.execute(
         """INSERT INTO Hardware (ID_Hard,ID_Tipohard, ID_Marca, Caracteristicas, Precio_Unitario, Unidades_Disponibles)
            VALUES (?, ?, ?, ?, ?, ?)""",
